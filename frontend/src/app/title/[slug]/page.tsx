@@ -7,18 +7,8 @@ import Image from 'next/image'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import Navbar from '../../../components/Navbar'
 import MediaBadge from '../../../components/MediaBadge'
-import { Title } from '../../types'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
-
-interface FullTitle extends Title {
-  connections: {
-    outgoing: Connection[]
-    incoming: Connection[]
-  }
-  tags: { id: number; name: string }[]
-  reviews: Review[]
-}
 
 interface Connection {
   id: number
@@ -42,6 +32,34 @@ interface Review {
   content: string
   spoiler: boolean
   created_at: string
+}
+
+interface FullTitle {
+  id: number
+  franchise_id: number
+  franchise_name: string
+  franchise_slug: string
+  title: string
+  slug: string
+  media_type: string
+  release_date: string
+  studio: string
+  author: string
+  artist: string
+  publisher: string
+  episode_count: number | null
+  chapter_count: number | null
+  volume_count: number | null
+  runtime_minutes: number | null
+  synopsis: string
+  cover_image: string
+  trailer_url: string
+  avg_rating: number
+  language: string
+  is_completed: boolean
+  tags: { id: number; name: string }[]
+  connections: { outgoing: Connection[]; incoming: Connection[] }
+  reviews: Review[]
 }
 
 export default function TitlePage() {
@@ -91,10 +109,10 @@ export default function TitlePage() {
 
   const allConnections = [
     ...(title.connections?.outgoing || []).map(c => ({
-      ...c, name: c.target_title, slug: c.target_slug, type: c.target_media_type, cover: c.target_cover, dir: 'out'
+      ...c, name: c.target_title, slug: c.target_slug, type: c.target_media_type, cover: c.target_cover,
     })),
     ...(title.connections?.incoming || []).map(c => ({
-      ...c, name: c.source_title, slug: c.source_slug, type: c.source_media_type, cover: c.source_cover, dir: 'in'
+      ...c, name: c.source_title, slug: c.source_slug, type: c.source_media_type, cover: c.source_cover,
     })),
   ]
 
@@ -105,26 +123,19 @@ export default function TitlePage() {
     return acc
   }, {} as Record<string, typeof allConnections>)
 
-  const meta: [string, string | number | null][] = [
-    ['Studio', title.studio],
-    ['Author', title.author],
-    ['Artist', title.artist],
-    ['Publisher', title.publisher],
-    ['Episodes', title.episode_count],
-    ['Chapters', title.chapter_count],
-    ['Volumes', title.volume_count],
-    ['Runtime', title.runtime_minutes ? `${title.runtime_minutes} min` : null],
-    ['Language', title.language],
-    ['Status', title.is_completed ? 'Completed' : 'Ongoing'],
-    ['Released', title.release_date ? title.release_date.slice(0, 10) : null],
-  ].filter(([, v]) => v != null) as [string, string | number][]
+  const meta: [string, string | number][] = [
+    ['Studio', title.studio], ['Author', title.author], ['Artist', title.artist],
+    ['Publisher', title.publisher], ['Episodes', title.episode_count!],
+    ['Chapters', title.chapter_count!], ['Volumes', title.volume_count!],
+    ['Runtime', title.runtime_minutes ? `${title.runtime_minutes} min` : ''],
+    ['Language', title.language], ['Status', title.is_completed ? 'Completed' : 'Ongoing'],
+    ['Released', title.release_date ? title.release_date.slice(0, 10) : ''],
+  ].filter(([, v]) => v) as [string, string | number][]
 
   return (
     <div className="min-h-screen">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-10">
-
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-white/30 mb-6">
           {title.franchise_name && (
             <>
@@ -137,7 +148,6 @@ export default function TitlePage() {
           <span className="text-white/60">{title.title}</span>
         </div>
 
-        {/* Main block */}
         <div className="flex gap-6 mb-8">
           <div className="relative w-36 md:w-44 aspect-[2/3] rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/5 shrink-0">
             {title.cover_image ? (
@@ -148,7 +158,6 @@ export default function TitlePage() {
               </div>
             )}
           </div>
-
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <MediaBadge type={title.media_type} />
@@ -157,11 +166,7 @@ export default function TitlePage() {
               )}
             </div>
             <h1 className="font-syne text-2xl md:text-3xl font-bold mb-1">{title.title}</h1>
-            {title.franchise_name && (
-              <p className="text-sm text-white/40 mb-3">{title.franchise_name}</p>
-            )}
-
-            {/* Score */}
+            {title.franchise_name && <p className="text-sm text-white/40 mb-3">{title.franchise_name}</p>}
             {title.avg_rating && (
               <div className="flex items-center gap-1 mb-3">
                 <span className="text-yellow-400 text-lg">★</span>
@@ -169,17 +174,13 @@ export default function TitlePage() {
                 <span className="text-white/30 text-sm">/ 10</span>
               </div>
             )}
-
-            {/* Tags */}
-            {title.tags && (
+            {title.tags && title.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-3">
-                {title.tags.split(',').filter(Boolean).map(tag => (
-                  <span key={tag} className="text-xs px-2 py-0.5 bg-white/5 rounded text-white/40">{tag}</span>
+                {title.tags.map(tag => (
+                  <span key={tag.id} className="text-xs px-2 py-0.5 bg-white/5 rounded text-white/40">{tag.name}</span>
                 ))}
               </div>
             )}
-
-            {/* Trailer */}
             {title.trailer_url && (
               <a href={title.trailer_url} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-sm text-[#e24b4a] hover:underline">
@@ -189,7 +190,6 @@ export default function TitlePage() {
           </div>
         </div>
 
-        {/* Synopsis */}
         {title.synopsis && (
           <div className="mb-8">
             <h2 className="font-syne text-lg font-bold mb-3">Synopsis</h2>
@@ -197,7 +197,6 @@ export default function TitlePage() {
           </div>
         )}
 
-        {/* Metadata */}
         {meta.length > 0 && (
           <div className="mb-8 bg-[#1a1a1a] border border-white/5 rounded-xl p-5">
             <h2 className="font-syne text-base font-bold mb-4">Details</h2>
@@ -212,7 +211,6 @@ export default function TitlePage() {
           </div>
         )}
 
-        {/* Connections / Spinoffs */}
         {Object.keys(groupedConnections).length > 0 && (
           <div className="mb-8">
             <h2 className="font-syne text-lg font-bold mb-4">Related & Spinoffs</h2>
@@ -224,11 +222,8 @@ export default function TitlePage() {
                   </p>
                   <div className="flex flex-wrap gap-3">
                     {items.map((c, i) => (
-                      <Link
-                        key={i}
-                        href={`/title/${c.slug}`}
-                        className="flex items-center gap-2 bg-[#1a1a1a] border border-white/5 rounded-lg px-3 py-2 hover:border-white/15 transition"
-                      >
+                      <Link key={i} href={`/title/${c.slug}`}
+                        className="flex items-center gap-2 bg-[#1a1a1a] border border-white/5 rounded-lg px-3 py-2 hover:border-white/15 transition">
                         {c.cover && (
                           <div className="relative w-8 h-10 rounded overflow-hidden shrink-0">
                             <Image src={c.cover} alt="" fill className="object-cover" />
@@ -247,7 +242,6 @@ export default function TitlePage() {
           </div>
         )}
 
-        {/* Reviews */}
         {title.reviews && title.reviews.length > 0 && (
           <div>
             <h2 className="font-syne text-lg font-bold mb-4">Reviews</h2>
@@ -258,9 +252,7 @@ export default function TitlePage() {
                     <span className="font-medium text-sm">{r.username}</span>
                     <span className="text-yellow-400 text-sm">★ {r.rating}/10</span>
                   </div>
-                  {r.spoiler && (
-                    <span className="text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded mb-2 inline-block">Spoiler</span>
-                  )}
+                  {r.spoiler && <span className="text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded mb-2 inline-block">Spoiler</span>}
                   <p className="text-sm text-white/50 leading-relaxed">{r.content}</p>
                 </div>
               ))}

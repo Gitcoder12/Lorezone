@@ -1,25 +1,45 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Search, TrendingUp, Film, BookOpen, Tv, Layers } from 'lucide-react'
+import { Search, TrendingUp, Clock, BookOpen } from 'lucide-react'
 import Navbar from '../components/Navbar'
-import { Franchise } from './types'
+import Footer from '../components/Footer'
+import MediaBadge from '../components/MediaBadge'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
+interface AnimeEntry {
+  mal_id: number
+  title: string
+  title_english: string
+  images: { jpg: { image_url: string } }
+  score: number
+  type: string
+  episodes: number | null
+}
+
 export default function HomePage() {
-  const [franchises, setFranchises] = useState<Franchise[]>([])
-  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
+  const [topAnime, setTopAnime] = useState<AnimeEntry[]>([])
+  const [topManga, setTopManga] = useState<AnimeEntry[]>([])
+  const [seasonNow, setSeasonNow] = useState<AnimeEntry[]>([])
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    fetch(`${API}/api/franchises`)
-      .then(r => r.json())
-      .then(d => { setFranchises(d); setLoading(false) })
-      .catch(() => setLoading(false))
+    Promise.all([
+      fetch(`${API}/api/live/top/anime?filter=bypopularity`).then(r => r.json()),
+      fetch(`${API}/api/live/top/manga?filter=bypopularity`).then(r => r.json()),
+      fetch(`${API}/api/live/season/now`).then(r => r.json()),
+    ]).then(([ta, tm, sn]) => {
+      setTopAnime(ta.data?.slice(0, 12) || [])
+      setTopManga(tm.data?.slice(0, 12) || [])
+      setSeasonNow(sn.data?.slice(0, 12) || [])
+      setLoading(false)
+    }).catch(() => setLoading(false))
   }, [])
 
   const handleSearch = (e: React.FormEvent) => {
@@ -27,111 +47,128 @@ export default function HomePage() {
     if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`)
   }
 
+  const MediaCard = ({ item, kind }: { item: AnimeEntry; kind: string }) => (
+    <Link
+      href={`/live/${kind}/${item.mal_id}`}
+      className="group bg-[#1a1a1a] border border-white/5 rounded-xl overflow-hidden hover:border-white/15 hover:-translate-y-1 transition-all duration-200 block"
+    >
+      <div className="relative aspect-[2/3] bg-[#222]">
+        {item.images?.jpg?.image_url ? (
+          <Image src={item.images.jpg.image_url} alt={item.title} fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="200px" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-3xl">{kind === 'anime' ? '🎬' : '📖'}</div>
+        )}
+        {item.score && (
+          <div className="absolute top-2 right-2 bg-black/70 backdrop-blur text-[10px] px-1.5 py-0.5 rounded text-yellow-400 font-bold">
+            ★ {item.score}
+          </div>
+        )}
+      </div>
+      <div className="p-2.5">
+        <p className="text-xs font-medium line-clamp-2 mb-1.5 leading-snug">{item.title_english || item.title}</p>
+        <MediaBadge type={kind === 'anime' ? (item.type?.toLowerCase() === 'tv' ? 'anime' : (item.type?.toLowerCase() || 'anime')) : 'manga'} small />
+      </div>
+    </Link>
+  )
+
+  const Section = ({ title, icon, items, kind, href }: {
+    title: string; icon: React.ReactNode; items: AnimeEntry[]; kind: string; href: string
+  }) => (
+    <div className="mb-14">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="font-syne text-xl font-bold flex items-center gap-2">{icon} {title}</h2>
+        <Link href={href} className="text-sm text-[#e24b4a] hover:underline">View all →</Link>
+      </div>
+      {loading ? (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+          {Array.from({ length: 12 }).map((_, i) => <div key={i} className="aspect-[2/3] bg-white/5 rounded-xl animate-pulse" />)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+          {items.map(item => <MediaCard key={item.mal_id} item={item} kind={kind} />)}
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div className="min-h-screen">
       <Navbar />
 
       {/* Hero */}
-      <div className="relative flex flex-col items-center justify-center text-center py-28 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#e24b4a]/5 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#e24b4a15_0%,_transparent_60%)] pointer-events-none" />
+      <div className="relative overflow-hidden flex flex-col items-center justify-center text-center py-24 px-4">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,_#e24b4a18_0%,_transparent_65%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,_#7c3aed10_0%,_transparent_50%)] pointer-events-none" />
 
-        <h1 className="font-syne text-5xl md:text-7xl font-bold mb-4 relative z-10">
-          Every Story Universe.<br />
-          <span className="text-[#e24b4a]">Finally Connected.</span>
-        </h1>
-        <p className="text-white/50 text-lg md:text-xl max-w-2xl mb-10 relative z-10">
-          Anime, manga, movies, spinoffs, OVAs — all grouped, all linked, one place.
-        </p>
-
-        <form onSubmit={handleSearch} className="relative z-10 w-full max-w-xl">
-          <div className="relative">
-            <input
-              type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Search for Bleach, Naruto, Attack on Titan..."
-              className="w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 pl-14 text-base focus:outline-none focus:border-[#e24b4a]/50 focus:ring-2 focus:ring-[#e24b4a]/10 placeholder-white/25"
-            />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-white/50 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            Live data from MyAnimeList · {new Date().getFullYear()}
           </div>
-        </form>
 
-        <div className="flex flex-wrap justify-center gap-6 mt-10 text-sm text-white/40 relative z-10">
-          {[
-            { icon: <Tv className="w-4 h-4" />, label: 'Anime' },
-            { icon: <BookOpen className="w-4 h-4" />, label: 'Manga & Novels' },
-            { icon: <Film className="w-4 h-4" />, label: 'Movies' },
-            { icon: <Layers className="w-4 h-4" />, label: 'Spinoffs' },
-          ].map(({ icon, label }) => (
-            <div key={label} className="flex items-center gap-1.5 text-white/40">
-              <span className="text-[#e24b4a]/70">{icon}</span>
-              {label}
+          <h1 className="font-syne text-5xl md:text-7xl font-bold mb-5 leading-tight">
+            Every Story Universe.<br />
+            <span className="text-[#e24b4a]">Finally Connected.</span>
+          </h1>
+          <p className="text-white/40 text-lg max-w-xl mx-auto mb-10">
+            Anime, manga, movies, OVAs, spinoffs — all grouped under one franchise. Discover what's connected.
+          </p>
+
+          <form onSubmit={handleSearch} className="w-full max-w-xl mx-auto">
+            <div className="relative">
+              <input type="text" value={query} onChange={e => setQuery(e.target.value)}
+                placeholder="Search Bleach, Naruto, One Piece..."
+                className="w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 pl-14 text-base focus:outline-none focus:border-[#e24b4a]/50 placeholder-white/20"
+              />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#e24b4a] hover:bg-[#c93e3d] transition rounded-full px-5 py-2.5 text-sm font-medium">
+                Search
+              </button>
             </div>
-          ))}
-        </div>
-      </div>
+          </form>
 
-      {/* Franchises */}
-      <div className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-syne text-2xl font-bold flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-[#e24b4a]" />
-            Featured Universes
-          </h2>
-          <Link href="/franchises" className="text-sm text-[#e24b4a] hover:underline">View all →</Link>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white/5 rounded-xl h-64 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {franchises.map(f => (
-              <Link
-                key={f.id}
-                href={`/franchise/${f.slug}`}
-                className="group bg-[#1a1a1a] border border-white/5 rounded-xl overflow-hidden hover:border-white/15 hover:-translate-y-1 transition-all duration-200"
-              >
-                <div className="h-36 bg-gradient-to-br from-[#e24b4a]/20 to-[#1a1a1a] flex items-center justify-center relative overflow-hidden">
-                  <span className="font-syne text-5xl font-bold text-white/10 group-hover:text-white/15 transition-colors">
-                    {f.name.charAt(0)}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent" />
-                </div>
-                <div className="p-5">
-                  <h3 className="font-syne text-lg font-bold mb-1">{f.name}</h3>
-                  <p className="text-sm text-white/40 line-clamp-2 mb-3">
-                    {f.description || 'Explore this connected universe'}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-white/30">
-                    <span>{f.title_count || 0} titles</span>
-                    {f.avg_rating && <span>★ {Number(f.avg_rating).toFixed(1)}</span>}
-                  </div>
-                </div>
+          <div className="flex flex-wrap justify-center gap-3 mt-6">
+            {[
+              { href: '/schedule', icon: '📅', label: 'Airing Schedule' },
+              { href: '/upcoming', icon: '🚀', label: 'Future Releases' },
+              { href: '/authors', icon: '✍️', label: 'Authors' },
+              { href: '/browse/anime', icon: '🎬', label: 'Top Anime' },
+              { href: '/browse/manga', icon: '📖', label: 'Top Manga' },
+            ].map(({ href, icon, label }) => (
+              <Link key={href} href={href}
+                className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 text-xs text-white/60 hover:text-white transition">
+                {icon} {label}
               </Link>
             ))}
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Feature callouts */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-16">
+      <div className="max-w-7xl mx-auto px-4 pb-10">
+        <Section title="Airing This Season" icon={<Clock className="w-5 h-5 text-green-400" />} items={seasonNow} kind="anime" href="/schedule" />
+        <Section title="Top Anime" icon={<TrendingUp className="w-5 h-5 text-[#e24b4a]" />} items={topAnime} kind="anime" href="/browse/anime" />
+        <Section title="Top Manga" icon={<BookOpen className="w-5 h-5 text-orange-400" />} items={topManga} kind="manga" href="/browse/manga" />
+      </div>
+
+      <div className="border-t border-b border-white/5 py-14 px-4 my-6">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { emoji: '🔗', title: 'Connected Universes', desc: 'Every manga, anime, movie, and spinoff linked together under one franchise.' },
-            { emoji: '⏱️', title: 'Timeline Explorer', desc: 'Read or watch in chronological order or release order — your choice.' },
-            { emoji: '🌀', title: 'Spinoff Discovery', desc: 'Find every OVA, side story, alternate timeline, and film in one tab.' },
-          ].map(({ emoji, title, desc }) => (
-            <div key={title} className="bg-[#1a1a1a] border border-white/5 rounded-xl p-6 text-center">
+            { emoji: '🔗', title: 'Connected Universes', desc: 'Every manga, anime, movie, OVA and spinoff linked together under one franchise page.', href: '/franchises' },
+            { emoji: '📅', title: 'Airing Schedule', desc: "See what's airing today, this week, and every day — with broadcast times.", href: '/schedule' },
+            { emoji: '🚀', title: 'Future Releases', desc: 'Track upcoming anime seasons and never miss an announcement again.', href: '/upcoming' },
+          ].map(({ emoji, title, desc, href }) => (
+            <Link key={title} href={href}
+              className="group bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-white/15 hover:-translate-y-1 transition-all duration-200">
               <div className="text-3xl mb-3">{emoji}</div>
-              <h3 className="font-syne font-bold text-base mb-2">{title}</h3>
+              <h3 className="font-syne font-bold text-base mb-2 group-hover:text-[#e24b4a] transition">{title}</h3>
               <p className="text-sm text-white/40">{desc}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

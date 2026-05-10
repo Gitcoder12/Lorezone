@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: lorezone_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lorezone
+      POSTGRES_PASSWORD: lorezone123
+      POSTGRES_DB: lorezone
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U lorezone']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: lorezone_api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      DB_USER: lorezone
+      DB_PASSWORD: lorezone123
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: lorezone
+      JWT_SECRET: lorezone_super_secret_change_in_prod
+      JIKAN_BASE: https://api.jikan.moe/v4
+    ports:
+      - '5000:5000'
+
+  frontend:
+    build: ./frontend
+    container_name: lorezone_web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+    ports:
+      - '3000:3000'
+
+volumes:
+  postgres_data:

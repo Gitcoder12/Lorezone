@@ -3,172 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LoreZone Detail: Full information, characters, recommendations, progress tracking.">
   <title>Detail — LoreZone</title>
   <link rel="stylesheet" href="style.css">
   <style>
     /* ── Hero Banner ── */
     .detail-hero {
-      position: relative; min-height: 420px;
+      position: relative; min-height: 440px;
       display: flex; align-items: flex-end;
       overflow: hidden;
     }
     .detail-hero-bg {
       position: absolute; inset: 0;
       background-size: cover; background-position: center;
-      filter: blur(12px) brightness(0.35);
+      filter: blur(16px) brightness(0.4);
       transform: scale(1.05);
     }
     .detail-hero-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to top, var(--bg) 30%, transparent 100%);
+      background: linear-gradient(to top, var(--bg) 25%, transparent 100%);
     }
     .detail-hero-content {
       position: relative; z-index: 2;
       max-width: 1400px; width: 100%; margin: 0 auto;
-      padding: 2rem 2rem 3rem;
-      display: flex; gap: 2.5rem; align-items: flex-end;
+      padding: 2rem 2rem 3.5rem;
+      display: flex; gap: 3rem; align-items: flex-end;
     }
     .detail-poster {
-      width: 200px; flex-shrink: 0;
-      border-radius: var(--radius);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-      border: 2px solid rgba(255,255,255,0.1);
+      width: 220px; flex-shrink: 0;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 3px solid rgba(255,255,255,0.1);
+      aspect-ratio: 2/3;
+      object-fit: cover;
     }
     .detail-info { flex: 1; }
     .detail-type-badge {
-      display: inline-block; margin-bottom: 0.75rem;
-      padding: 0.3rem 0.9rem; border-radius: 50px;
-      font-size: 0.8rem; font-weight: 700;
+      display: inline-block; margin-bottom: 1rem;
+      padding: 0.4rem 1rem; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 800;
       text-transform: uppercase; letter-spacing: 2px;
     }
     .detail-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.6rem, 4vw, 3rem);
-      line-height: 1.1; margin-bottom: 0.75rem;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      line-height: 1.1; margin-bottom: 0.9rem;
+      letter-spacing: -0.5px;
     }
     .detail-meta-row {
-      display: flex; gap: 1.25rem; flex-wrap: wrap;
-      align-items: center; margin-bottom: 1rem;
-      color: var(--text2); font-size: 0.9rem;
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      align-items: center; margin-bottom: 1.2rem;
+      color: var(--text2); font-size: 0.95rem;
     }
-    .detail-meta-row .dot { color: var(--text3); }
+    .detail-meta-row .dot { color: var(--text3); opacity: 0.5; }
     .detail-rating {
-      font-size: 1.2rem; font-weight: 700;
-      color: var(--gold); display: flex; align-items: center; gap: 0.3rem;
+      font-size: 1.4rem; font-weight: 800;
+      color: var(--gold); display: flex; align-items: center; gap: 0.4rem;
     }
-    .detail-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
-
-    /* ── Content Warning Banner ── */
-    .warning-banner {
-      background: linear-gradient(135deg, #8b0000 0%, #dc2f02 100%);
-      border-left: 4px solid #ff0000;
-      padding: 1rem 1.25rem;
-      border-radius: var(--radius);
-      margin-bottom: 1.5rem;
-      display: flex; gap: 1rem; align-items: flex-start;
+    .detail-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .detail-warnings {
+      display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem;
     }
-    .warning-banner-icon { font-size: 1.5rem; flex-shrink: 0; }
-    .warning-banner-text {
-      color: white;
-    }
-    .warning-banner-title {
-      font-weight: 700; margin-bottom: 0.3rem;
-    }
-    .warning-banner-desc {
-      font-size: 0.9rem; opacity: 0.95;
-    }
-    .warning-pills {
-      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;
-    }
-    .warning-pill {
-      background: rgba(255,255,255,0.2);
-      padding: 0.2rem 0.6rem;
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 600;
+    .warning-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.8rem; border-radius: 50px;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      border: 1px solid;
     }
 
     /* ── Main Content ── */
     .detail-layout {
       max-width: 1400px; margin: 0 auto;
-      padding: 2rem;
-      display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem;
+      padding: 3rem 2rem;
+      display: grid; grid-template-columns: 1fr 340px; gap: 3rem;
     }
 
-    .detail-section { margin-bottom: 2.5rem; }
+    .detail-section { margin-bottom: 3rem; }
     .detail-section-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: 1rem; color: var(--text2);
+      font-size: 1.1rem; color: var(--text2);
       text-transform: uppercase; letter-spacing: 2px;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 2px solid var(--border);
     }
 
     .synopsis-text {
-      font-size: 1rem; line-height: 1.8;
+      font-size: 1rem; line-height: 1.9;
       color: var(--text2); font-weight: 400;
     }
 
     /* ── Genre Tags ── */
-    .genre-list { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    
-    /* ── Demographic Badge ── */
-    .demographic-badge {
-      display: inline-block;
-      background: var(--purple);
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 50px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    .genre-list { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.75rem; }
 
     /* ── Characters ── */
     .characters-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 1rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1.2rem; margin-top: 1rem;
     }
     .char-card {
       text-align: center;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1rem 0.5rem;
+      padding: 1.2rem 0.8rem;
       transition: all var(--transition);
     }
-    .char-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .char-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--glow); }
     .char-card img {
-      width: 70px; height: 70px; border-radius: 50%;
+      width: 80px; height: 80px; border-radius: 50%;
       object-fit: cover; border: 2px solid var(--border);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
     }
-    .char-name { font-weight: 700; font-size: 0.85rem; }
-    .char-role { font-size: 0.75rem; color: var(--text3); }
+    .char-name { font-weight: 800; font-size: 0.85rem; color: var(--text); }
+    .char-role { font-size: 0.75rem; color: var(--text3); margin-top: 0.3rem; }
 
     /* ── Progress Tracker ── */
     .tracker-box {
-      background: var(--surface);
+      background: linear-gradient(135deg, var(--surface), var(--bg3));
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
+      padding: 1.75rem;
     }
     .tracker-input-row {
-      display: flex; gap: 0.75rem; align-items: center;
-      margin-top: 1rem;
+      display: flex; gap: 0.9rem; align-items: center;
+      margin-top: 1.2rem;
     }
     .tracker-input {
       background: var(--bg3); border: 1px solid var(--border);
       color: var(--text); font-family: inherit;
-      font-size: 1rem; padding: 0.4rem 0.75rem;
-      border-radius: var(--radius); width: 80px;
+      font-size: 1rem; padding: 0.5rem 0.9rem;
+      border-radius: var(--radius); width: 90px;
       outline: none;
-      transition: border-color var(--transition);
+      transition: all var(--transition);
     }
-    .tracker-input:focus { border-color: var(--accent); }
-    .tracker-label { color: var(--text2); font-size: 0.9rem; }
+    .tracker-input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+    .tracker-label { color: var(--text2); font-size: 0.9rem; font-weight: 600; }
 
     /* ── Info Sidebar ── */
     .info-box {
@@ -180,37 +150,39 @@
     }
     .info-row {
       display: flex; justify-content: space-between;
-      padding: 0.6rem 0;
+      padding: 0.75rem 0;
       border-bottom: 1px solid var(--border);
       font-size: 0.9rem;
     }
     .info-row:last-child { border-bottom: none; }
-    .info-key { color: var(--text3); font-weight: 600; }
-    .info-val { color: var(--text); font-weight: 700; text-align: right; }
+    .info-key { color: var(--text3); font-weight: 700; }
+    .info-val { color: var(--text); font-weight: 800; text-align: right; }
 
     /* ── Related ── */
-    .related-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .related-list { display: flex; flex-direction: column; gap: 0.9rem; }
     .related-item {
-      display: flex; gap: 0.75rem; align-items: center;
-      padding: 0.75rem;
+      display: flex; gap: 0.9rem; align-items: center;
+      padding: 0.9rem;
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       cursor: pointer; text-decoration: none;
       transition: all var(--transition);
     }
-    .related-item:hover { border-color: var(--accent); }
+    .related-item:hover { border-color: var(--accent); box-shadow: var(--glow); }
     .related-item img {
-      width: 44px; height: 66px; border-radius: 4px; object-fit: cover;
+      width: 50px; height: 75px; border-radius: 4px; object-fit: cover; flex-shrink: 0;
     }
-    .related-item .ri-title { font-weight: 700; font-size: 0.9rem; color: var(--text); }
-    .related-item .ri-meta { font-size: 0.75rem; color: var(--text3); }
+    .related-item .ri-title { font-weight: 800; font-size: 0.9rem; color: var(--text); }
+    .related-item .ri-meta { font-size: 0.75rem; color: var(--text3); margin-top: 0.2rem; }
 
-    /* ── Trailer embed ── */
+    /* ── Trailer ── */
     .trailer-wrap {
       position: relative; padding-top: 56.25%;
-      border-radius: var(--radius); overflow: hidden;
+      border-radius: var(--radius-lg); overflow: hidden;
       background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-top: 1rem;
     }
     .trailer-wrap iframe {
       position: absolute; inset: 0;
@@ -220,47 +192,33 @@
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 0.5rem; color: var(--text3);
+      gap: 0.8rem; color: var(--text3);
     }
-    .trailer-placeholder .big { font-size: 2.5rem; }
+    .trailer-placeholder .big { font-size: 3rem; }
 
     /* ── Back button ── */
     .back-btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
       color: var(--text3); text-decoration: none;
-      font-size: 0.85rem; font-weight: 600;
-      margin: 1rem 2rem 0;
-      transition: color var(--transition);
+      font-size: 0.9rem; font-weight: 700; letter-spacing: 1px;
+      margin: 1.5rem 2rem 0;
+      transition: all var(--transition);
+      text-transform: uppercase;
     }
     .back-btn:hover { color: var(--accent); }
 
-    /* ── Genre Best Practices ── */
-    .genre-best {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+    .demographic-badge {
+      display: inline-block; padding: 0.3rem 0.8rem;
+      background: var(--purple); color: white;
+      border-radius: 50px; font-size: 0.75rem;
+      font-weight: 700; text-transform: uppercase;
+      margin-top: 0.75rem;
     }
-    .genre-best-title {
-      font-weight: 700; margin-bottom: 0.75rem;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .genre-best-list {
-      display: flex; flex-direction: column; gap: 0.6rem;
-    }
-    .genre-best-item {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 0.9rem;
-      padding: 0.5rem 0;
-    }
-    .genre-best-item-title { color: var(--text); font-weight: 600; }
-    .genre-best-item-meta { color: var(--text3); font-size: 0.8rem; }
 
     @media (max-width: 900px) {
       .detail-layout { grid-template-columns: 1fr; }
       .detail-hero-content { flex-direction: column; align-items: flex-start; }
-      .detail-poster { width: 140px; }
+      .detail-poster { width: 160px; }
     }
   </style>
 </head>
@@ -283,10 +241,10 @@
 
   if (!item) {
     document.getElementById('detail-root').innerHTML = `
-      <div style="text-align:center;padding:5rem;color:var(--text3)">
-        <div style="font-size:3rem">🔍</div>
-        <p>Title not found.</p>
-        <a href="index.html" class="btn btn-primary" style="margin-top:1rem">Back to Home</a>
+      <div style="text-align:center;padding:5rem 2rem;color:var(--text3)">
+        <div style="font-size:3.5rem;margin-bottom:1rem">🔍</div>
+        <p style="font-size:1.1rem;margin-bottom:1.5rem">Title not found</p>
+        <a href="index.html" class="btn btn-primary">← Back to Home</a>
       </div>`;
   } else {
     document.title = `${item.title} — LoreZone`;
@@ -298,16 +256,8 @@
     const prog = Progress.get(item.id);
     const total = getTotal(item);
     const totalLabel = getTotalLabel(item);
-    const related = (item.related || []).map(id => LOREZONE_DB.find(i => i.id === id)).filter(Boolean);
-    const warnings = item.warnings || [];
+    const related = getRecommendations(item.id, 5);
 
-    // Get best titles in each genre
-    const bestInGenres = {};
-    (item.genres || []).forEach(genre => {
-      bestInGenres[genre] = getBestInGenre(genre, 2);
-    });
-
-    // Trailer ID extraction
     let trailerId = null;
     if (item.trailer) {
       const m = item.trailer.match(/[?&]v=([^&]+)/) || item.trailer.match(/youtu\.be\/([^?]+)/);
@@ -316,7 +266,7 @@
 
     const infoRows = [];
     if (item.year) infoRows.push(['Year', item.year]);
-    if (item.demographic) infoRows.push(['Demographic', item.demographic]);
+    if (item.demographic) infoRows.push(['Demo', item.demographic]);
     if (item.status) infoRows.push(['Status', item.status]);
     if (item.episodes) infoRows.push(['Episodes', item.episodes]);
     if (item.seasons) infoRows.push(['Seasons', item.seasons]);
@@ -335,21 +285,13 @@
 
     const pct = total > 1 ? Math.min(100, (prog.current / total) * 100) : 0;
 
-    const warningBanner = warnings.length ? `
-      <div class="warning-banner">
-        <div class="warning-banner-icon">⚠️</div>
-        <div class="warning-banner-text">
-          <div class="warning-banner-title">Content Warning</div>
-          <div class="warning-banner-desc">This title contains content that may be disturbing or intense.</div>
-          <div class="warning-pills">
-            ${warnings.map(w => {
-              const warn = ContentWarnings[w];
-              return warn ? `<div class="warning-pill">${warn.icon} ${warn.label}</div>` : '';
-            }).join('')}
-          </div>
-        </div>
-      </div>
-    ` : '';
+    let warningsHTML = '';
+    if (item.warnings && item.warnings.length > 0) {
+      warningsHTML = `<div class="detail-warnings">${item.warnings.map(w => {
+        const warn = ContentWarnings[w];
+        return `<span class="warning-badge" style="border-color:${warn.color};color:${warn.color}">${warn.icon} ${warn.label}</span>`;
+      }).join('')}</div>`;
+    }
 
     document.getElementById('detail-root').innerHTML = `
       <!-- Hero Banner -->
@@ -357,8 +299,7 @@
         <div class="detail-hero-bg" style="background-image:url('${item.image}')"></div>
         <div class="detail-hero-overlay"></div>
         <div class="detail-hero-content">
-          <img class="detail-poster" src="${item.image}" alt="${item.title}"
-               onerror="this.src='https://placehold.co/200x300/111118/e63946?text=No+Image'">
+          <img class="detail-poster" src="${item.image}" alt="${item.title}" onerror="this.src='https://placehold.co/220x330/111118/e63946?text=No+Image'">
           <div class="detail-info">
             <span class="detail-type-badge card-badge ${getBadgeClass(item.type)}">${item.type}</span>
             <h1 class="detail-title">${item.title}</h1>
@@ -370,17 +311,17 @@
               <span class="dot">·</span>
               <span style="color:${item.status==='Ongoing'||item.status==='Publishing'?'var(--accent)':'var(--text2)'}">${item.status}</span>
             </div>
-            ${item.demographic ? `<div class="mt-2"><span class="demographic-badge">${item.demographic}</span></div>` : ''}
-            <div class="genre-list mt-2">
+            ${item.demographic ? `<span class="demographic-badge">${item.demographic}</span>` : ''}
+            <div class="genre-list">
               ${(item.genres||[]).map(g=>`<span class="tag">${g}</span>`).join('')}
             </div>
+            ${warningsHTML}
             <div class="detail-actions">
-              <button id="wl-btn" class="btn ${inWatchlist?'btn-primary':'btn-ghost'}"
-                      onclick="doWatchlist()">
+              <button id="wl-btn" class="btn ${inWatchlist?'btn-primary':'btn-ghost'}" onclick="doWatchlist()">
                 ${inWatchlist ? '♥ In My List' : '♡ Add to List'}
               </button>
-              ${item.trailer ? `<a href="${item.trailer}" target="_blank" class="btn btn-ghost">▶ Watch Trailer</a>` : ''}
-              <a href="browse.html" class="btn btn-ghost">← Browse More</a>
+              ${item.trailer ? `<a href="${item.trailer}" target="_blank" class="btn btn-ghost">▶ Trailer</a>` : ''}
+              <a href="browse.html" class="btn btn-ghost">← Browse</a>
             </div>
           </div>
         </div>
@@ -389,9 +330,6 @@
       <!-- Detail Layout -->
       <div class="detail-layout">
         <div>
-          <!-- Warning Banner -->
-          ${warningBanner}
-
           <!-- Synopsis -->
           <div class="detail-section">
             <h2 class="detail-section-title">Synopsis</h2>
@@ -405,8 +343,7 @@
             <div class="characters-grid">
               ${item.characters.map(c => `
                 <div class="char-card">
-                  <img src="${c.img}" alt="${c.name}"
-                       onerror="this.src='https://placehold.co/70x70/111118/e63946?text=${c.name[0]}'">
+                  <img src="${c.img}" alt="${c.name}" onerror="this.src='https://placehold.co/80x80/111118/e63946?text=${c.name[0]}'">
                   <div class="char-name">${c.name}</div>
                   <div class="char-role">${c.role}</div>
                 </div>
@@ -414,22 +351,21 @@
             </div>
           </div>` : ''}
 
-          <!-- Tracker -->
+          <!-- Progress -->
           ${total > 1 ? `
           <div class="detail-section">
             <h2 class="detail-section-title">My Progress</h2>
             <div class="tracker-box">
-              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.75rem">
                 <span class="tracker-label">Progress: <strong id="prog-label">${prog.current} / ${total}</strong></span>
-                <span class="tracker-label">${Math.round(pct)}%</span>
+                <span class="tracker-label" style="color:var(--accent);font-weight:800">${Math.round(pct)}%</span>
               </div>
               <div class="progress-bar">
                 <div class="progress-fill" id="prog-fill" style="width:${pct}%"></div>
               </div>
               <div class="tracker-input-row">
-                <input type="number" class="tracker-input" id="prog-input"
-                       min="0" max="${total}" value="${prog.current}">
-                <span class="tracker-label">/ ${total} ${totalLabel}</span>
+                <input type="number" class="tracker-input" id="prog-input" min="0" max="${total}" value="${prog.current}">
+                <span class="tracker-label">/ ${total}</span>
                 <button class="btn btn-primary" onclick="saveProgress(${item.id}, ${total})">Save</button>
               </div>
             </div>
@@ -459,56 +395,22 @@
             `).join('')}
           </div>
 
-          <!-- Best in Genres -->
-          ${Object.keys(bestInGenres).length ? `
-          <div class="genre-best">
-            <div class="genre-best-title">⭐ Best in Genre</div>
-            <div class="genre-best-list">
-              ${Object.entries(bestInGenres).map(([genre, titles]) => `
-                ${titles.map(t => `
-                  <a href="detail.html?id=${t.id}" class="genre-best-item" style="cursor:pointer;text-decoration:none;transition:all 0.2s;border-radius:4px;padding:0.5rem" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
-                    <span class="genre-best-item-title">${t.title}</span>
-                    <span class="genre-best-item-meta">★${t.rating}</span>
-                  </a>
-                `).join('')}
-              `).join('')}
-            </div>
-          </div>` : ''}
-
-          <!-- Related -->
+          <!-- Recommendations -->
           ${related.length ? `
           <div class="info-box">
-            <h3 class="detail-section-title" style="margin-bottom:0.75rem">Related</h3>
+            <h3 class="detail-section-title" style="margin-bottom:1rem;border:none;padding:0">Similar</h3>
             <div class="related-list">
               ${related.map(r => `
                 <a class="related-item" href="detail.html?id=${r.id}">
-                  <img src="${r.image}" alt="${r.title}"
-                       onerror="this.src='https://placehold.co/44x66/111118/e63946?text=?'">
+                  <img src="${r.image}" alt="${r.title}" onerror="this.src='https://placehold.co/50x75/111118/e63946?text=?'">
                   <div>
                     <div class="ri-title">${r.title}</div>
-                    <div class="ri-meta">${r.type} · ${r.year} · ★${r.rating}</div>
+                    <div class="ri-meta">${r.type} · ${r.year}</div>
                   </div>
                 </a>
               `).join('')}
             </div>
           </div>` : ''}
-
-          <!-- More like this -->
-          <div class="info-box">
-            <h3 class="detail-section-title" style="margin-bottom:0.75rem">More like this</h3>
-            <div class="related-list">
-              ${LOREZONE_DB.filter(i => i.id !== item.id && i.type === item.type).slice(0,4).map(r => `
-                <a class="related-item" href="detail.html?id=${r.id}">
-                  <img src="${r.image}" alt="${r.title}"
-                       onerror="this.src='https://placehold.co/44x66/111118/e63946?text=?'">
-                  <div>
-                    <div class="ri-title">${r.title}</div>
-                    <div class="ri-meta">${r.type} · ${r.year} · ★${r.rating}</div>
-                  </div>
-                </a>
-              `).join('')}
-            </div>
-          </div>
         </div>
       </div>
     `;
@@ -528,7 +430,7 @@
     document.getElementById('prog-label').textContent = `${val} / ${total}`;
     const pct = Math.round((val / total) * 100);
     document.getElementById('prog-fill').style.width = pct + '%';
-    showToast(`✅ Progress saved: ${pct}%`);
+    showToast(`✅ Progress: ${pct}%`);
   }
 </script>
 </body>

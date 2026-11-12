@@ -40,7 +40,7 @@ export default function SchedulePage() {
 
       <div className="py-14 px-4 text-center bg-gradient-to-b from-blue-900/15 to-transparent">
         <h1 className="font-syne text-4xl md:text-5xl font-bold mb-3">📅 Airing Schedule</h1>
-        <p className="text-white/40 text-sm max-w-lg mx-auto">What's airing this week — by day of the week.</p>
+        <p className="text-white/40 text-sm max-w-lg mx-auto">What&apos;s airing this week — by day of the week.</p>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-20">

@@ -18,7 +18,7 @@ export default function FranchisesPage() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(\`\${API}/api/franchises\`, { signal: controller.signal })
+    fetch(`${API}/api/franchises`, { signal: controller.signal })
       .then(response => {
         if (!response.ok) throw new Error('Could not load universes')
         return response.json()
@@ -60,7 +60,7 @@ export default function FranchisesPage() {
           <div className="directory-toolbar">
             <div className="directory-count">
               <Sparkles size={15} />
-              <span>{loading ? 'Loading worlds' : \`\${franchises.length} connected universes\`}</span>
+              <span>{loading ? 'Loading worlds' : `${franchises.length} connected universes`}</span>
             </div>
             <label className="directory-search">
               <Search size={16} />
@@ -98,7 +98,7 @@ export default function FranchisesPage() {
             {visible.map((franchise, index) => (
               <Link
                 key={franchise.id}
-                href={\`/franchise/\${franchise.slug}\`}
+                href={`/franchise/${franchise.slug}`}
                 className="franchise-card"
               >
                 {franchise.cover_image ? (

@@ -9,7 +9,7 @@ export default function TitleCard({ title }: { title: Title }) {
   const releaseYear = title.release_date ? new Date(title.release_date).getFullYear() : null
 
   return (
-    <Link href={\`/title/\${title.slug}\`} className="title-library-card group">
+    <Link href={`/title/${title.slug}`} className="title-library-card group">
       <div className="title-library-card__art">
         {title.cover_image ? (
           <Image

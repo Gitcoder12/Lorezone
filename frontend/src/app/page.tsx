@@ -44,8 +44,8 @@ const quickPaths = [
 ]
 
 async function readApi(path: string, signal: AbortSignal) {
-  const response = await fetch(\`\${API}\${path}\`, { signal })
-  if (!response.ok) throw new Error(\`Request failed: \${response.status}\`)
+  const response = await fetch(`${API}${path}`, { signal })
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`)
   return response.json()
 }
 
@@ -94,13 +94,13 @@ export default function HomePage() {
       return 'Trace every universe, discover the stories inside it, and find the next thing worth getting lost in.'
     }
     const synopsis = (featured as CatalogueMedia & { synopsis?: string }).synopsis || ''
-    return synopsis.length > 185 ? \`\${synopsis.slice(0, 182).trim()}…\` : synopsis
+    return synopsis.length > 185 ? `${synopsis.slice(0, 182).trim()}…` : synopsis
   }, [featured])
 
   const submitSearch = (event: FormEvent) => {
     event.preventDefault()
     const trimmed = query.trim()
-    if (trimmed) router.push(\`/search?q=\${encodeURIComponent(trimmed)}\`)
+    if (trimmed) router.push(`/search?q=${encodeURIComponent(trimmed)}`)
   }
 
   return (
@@ -161,7 +161,7 @@ export default function HomePage() {
 
             <div className="hero-aside">
               {featured ? (
-                <Link href={\`/live/anime/\${featured.mal_id}\`} className="hero-feature-card">
+                <Link href={`/live/anime/${featured.mal_id}`} className="hero-feature-card">
                   <span className="hero-feature-card__image">
                     {featuredImage ? (
                       <Image src={featuredImage} alt="" fill sizes="75px" />
@@ -170,7 +170,7 @@ export default function HomePage() {
                   <span className="hero-feature-card__copy">
                     <small>IN THE SPOTLIGHT</small>
                     <strong>{featuredTitle}</strong>
-                    <span>{featured.score ? \`★ \${featured.score.toFixed(1)} · \` : ''}{featured.type || 'Anime'}</span>
+                    <span>{featured.score ? `★ ${featured.score.toFixed(1)} · ` : ''}{featured.type || 'Anime'}</span>
                   </span>
                   <ArrowUpRight className="hero-feature-card__arrow" size={18} />
                 </Link>
@@ -250,7 +250,7 @@ export default function HomePage() {
             <div className="universe-grid">
               {catalogue.franchises.slice(0, 3).map((franchise, index) => (
                 <Link
-                  href={\`/franchise/\${franchise.slug}\`}
+                  href={`/franchise/${franchise.slug}`}
                   className="universe-card"
                   key={franchise.id}
                 >

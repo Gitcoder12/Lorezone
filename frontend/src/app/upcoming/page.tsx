@@ -65,7 +65,7 @@ export default function UpcomingPage() {
           🚀 Future Releases
         </h1>
         <p className="text-white/40 text-base max-w-xl mx-auto relative z-10">
-          Upcoming anime announced for future seasons — bookmark what you're hyped for.
+          Upcoming anime announced for future seasons — bookmark what you&apos;re hyped for.
         </p>
       </div>
 

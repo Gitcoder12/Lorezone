@@ -24,8 +24,8 @@ export default function TitlesPage() {
     setLoading(true)
     setError(false)
     const endpoint = filter === 'all'
-      ? \`\${API}/api/titles?limit=60\`
-      : \`\${API}/api/titles?media_type=\${encodeURIComponent(filter)}&limit=60\`
+      ? `${API}/api/titles?limit=60`
+      : `${API}/api/titles?media_type=${encodeURIComponent(filter)}&limit=60`
 
     fetch(endpoint, { signal: controller.signal })
       .then(response => {
@@ -64,7 +64,7 @@ export default function TitlesPage() {
               role="tab"
               aria-selected={filter === type}
               onClick={() => setFilter(type)}
-              className={\`filter-pill \${filter === type ? 'is-active' : ''}\`}
+              className={`filter-pill ${filter === type ? 'is-active' : ''}`}
             >
               {type === 'all' ? 'Everything' : type.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase())}
             </button>

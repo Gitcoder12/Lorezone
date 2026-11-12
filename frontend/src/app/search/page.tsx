@@ -32,7 +32,7 @@ function SearchContent() {
     const controller = new AbortController()
     setLoading(true)
     setError(false)
-    fetch(\`\${API}/api/search?q=\${encodeURIComponent(queryParam)}\`, { signal: controller.signal })
+    fetch(`${API}/api/search?q=${encodeURIComponent(queryParam)}`, { signal: controller.signal })
       .then(response => {
         if (!response.ok) throw new Error('Search is unavailable')
         return response.json()
@@ -52,7 +52,7 @@ function SearchContent() {
   const submit = (event: FormEvent) => {
     event.preventDefault()
     const trimmed = query.trim()
-    if (trimmed.length >= 2) router.push(\`/search?q=\${encodeURIComponent(trimmed)}\`)
+    if (trimmed.length >= 2) router.push(`/search?q=${encodeURIComponent(trimmed)}`)
   }
 
   const franchises = results.filter(result => result.result_type === 'franchise')
@@ -119,7 +119,7 @@ function SearchContent() {
             </div>
             <div className="search-franchise-grid">
               {franchises.map(franchise => (
-                <Link href={\`/franchise/\${franchise.slug}\`} key={franchise.id} className="search-franchise-card">
+                <Link href={`/franchise/${franchise.slug}`} key={franchise.id} className="search-franchise-card">
                   <span className="search-franchise-card__symbol">{franchise.title.slice(0, 1)}</span>
                   <span><strong>{franchise.title}</strong><small>Connected universe</small></span>
                   <ArrowUpRight size={16} />
@@ -137,7 +137,7 @@ function SearchContent() {
             </div>
             <div className="search-title-list">
               {titles.map(title => (
-                <Link href={\`/title/\${title.slug}\`} key={title.id} className="search-title-card">
+                <Link href={`/title/${title.slug}`} key={title.id} className="search-title-card">
                   <span className="search-title-card__symbol">{title.title.slice(0, 1)}</span>
                   <span className="search-title-card__copy">
                     <strong>{title.title}</strong>

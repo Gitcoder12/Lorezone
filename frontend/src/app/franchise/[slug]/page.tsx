@@ -28,7 +28,7 @@ export default function FranchisePage() {
     if (!slug) return
     const controller = new AbortController()
     setLoading(true)
-    fetch(\`\${API}/api/franchises/\${encodeURIComponent(slug)}\`, { signal: controller.signal })
+    fetch(`${API}/api/franchises/${encodeURIComponent(slug)}`, { signal: controller.signal })
       .then(response => {
         if (!response.ok) throw new Error('Franchise not found')
         return response.json()
@@ -136,7 +136,7 @@ export default function FranchisePage() {
                 {franchise.timelines.map(timeline => (
                   <Link
                     key={timeline.id}
-                    href={\`/timeline/\${franchise.slug}/\${timeline.slug}\`}
+                    href={`/timeline/${franchise.slug}/${timeline.slug}`}
                     className="timeline-link"
                   >
                     <span>{timeline.is_primary ? 'PRIMARY TIMELINE' : 'ALTERNATE PATH'}</span>
@@ -167,7 +167,7 @@ export default function FranchisePage() {
                   aria-selected={activeTab === tab}
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={\`filter-pill \${activeTab === tab ? 'is-active' : ''}\`}
+                  className={`filter-pill ${activeTab === tab ? 'is-active' : ''}`}
                 >
                   {tab === 'all' ? 'Everything' : tab.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase())}
                   <span>{tab === 'all' ? titles.length : byType[tab]?.length || 0}</span>

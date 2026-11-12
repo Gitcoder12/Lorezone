@@ -51,7 +51,7 @@ export default function Navbar() {
       requestRef.current = controller
       try {
         const response = await fetch(
-          \`\${API}/api/live/search?q=\${encodeURIComponent(trimmed)}\`,
+          `${API}/api/live/search?q=${encodeURIComponent(trimmed)}`,
           { signal: controller.signal }
         )
         if (!response.ok) throw new Error('Search request failed')
@@ -84,7 +84,7 @@ export default function Navbar() {
     event.preventDefault()
     const trimmed = query.trim()
     if (!trimmed) return
-    router.push(\`/search?q=\${encodeURIComponent(trimmed)}\`)
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`)
     setQuery('')
     setSuggestions([])
     setShowSuggestions(false)
@@ -92,7 +92,7 @@ export default function Navbar() {
   }
 
   const chooseSuggestion = (item: Suggestion) => {
-    router.push(\`/live/\${item.kind}/\${item.mal_id}\`)
+    router.push(`/live/${item.kind}/${item.mal_id}`)
     setQuery('')
     setSuggestions([])
     setShowSuggestions(false)
@@ -144,7 +144,7 @@ export default function Navbar() {
                 return (
                   <button
                     type="button"
-                    key={\`\${item.kind}-\${item.mal_id}\`}
+                    key={`${item.kind}-${item.mal_id}`}
                     onMouseDown={() => chooseSuggestion(item)}
                     className="search-suggestion"
                   >

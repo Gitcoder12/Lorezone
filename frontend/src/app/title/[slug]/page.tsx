@@ -86,7 +86,7 @@ export default function TitlePage() {
     if (!slug) return
     const controller = new AbortController()
     setLoading(true)
-    fetch(\`\${API}/api/titles/\${encodeURIComponent(slug)}\`, { signal: controller.signal })
+    fetch(`${API}/api/titles/${encodeURIComponent(slug)}`, { signal: controller.signal })
       .then(response => {
         if (!response.ok) throw new Error('Title not found')
         return response.json()
@@ -172,7 +172,7 @@ export default function TitlePage() {
     ['Episodes', title.episode_count || ''],
     ['Chapters', title.chapter_count || ''],
     ['Volumes', title.volume_count || ''],
-    ['Runtime', title.runtime_minutes ? \`\${title.runtime_minutes} min\` : ''],
+    ['Runtime', title.runtime_minutes ? `${title.runtime_minutes} min` : ''],
     ['Language', title.language],
     ['Status', title.is_completed ? 'Completed' : 'Ongoing'],
     ['Released', releaseYear || ''],
@@ -197,7 +197,7 @@ export default function TitlePage() {
               <div className="title-breadcrumbs">
                 <Link href="/titles">Catalogue</Link><span>/</span>
                 {title.franchise_name && title.franchise_slug ? (
-                  <><Link href={\`/franchise/\${title.franchise_slug}\`}>{title.franchise_name}</Link><span>/</span></>
+                  <><Link href={`/franchise/${title.franchise_slug}`}>{title.franchise_name}</Link><span>/</span></>
                 ) : null}
                 <span>{title.title}</span>
               </div>
@@ -260,7 +260,7 @@ export default function TitlePage() {
                       <div className="related-grid">
                         {items.map((item, index) => (
                           item.slug ? (
-                            <Link href={\`/title/\${item.slug}\`} className="related-card" key={\`\${item.id}-\${index}\`}>
+                            <Link href={`/title/${item.slug}`} className="related-card" key={`${item.id}-${index}`}>
                               <span className="related-card__image">
                                 {item.cover ? <Image src={item.cover} alt="" fill sizes="64px" /> : null}
                               </span>
@@ -305,7 +305,7 @@ export default function TitlePage() {
               <h3>There’s more to this universe.</h3>
               <p>See the other titles connected to this story, all in one place.</p>
               {title.franchise_slug ? (
-                <Link href={\`/franchise/\${title.franchise_slug}\`} className="secondary-button">
+                <Link href={`/franchise/${title.franchise_slug}`} className="secondary-button">
                   Open universe <ArrowUpRight size={14} />
                 </Link>
               ) : (

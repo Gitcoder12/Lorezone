@@ -49,9 +49,9 @@ function PosterCard({
 
   return (
     <Link
-      href={\`/live/\${kind}/\${item.mal_id}\`}
+      href={`/live/${kind}/${item.mal_id}`}
       className="poster-card group"
-      aria-label={\`Open \${label}\`}
+      aria-label={`Open ${label}`}
     >
       <div className="poster-card__art">
         {image ? (
@@ -120,10 +120,10 @@ export default function MediaRail({
             Explore all <span aria-hidden="true">↗</span>
           </Link>
           <div className="rail-controls">
-            <button type="button" aria-label={\`Scroll \${title} left\`} onClick={() => scroll('left')}>
+            <button type="button" aria-label={`Scroll ${title} left`} onClick={() => scroll('left')}>
               <ArrowLeft size={17} />
             </button>
-            <button type="button" aria-label={\`Scroll \${title} right\`} onClick={() => scroll('right')}>
+            <button type="button" aria-label={`Scroll ${title} right`} onClick={() => scroll('right')}>
               <ArrowRight size={17} />
             </button>
           </div>

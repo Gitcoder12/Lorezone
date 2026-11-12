@@ -36,6 +36,35 @@ export default function Navbar() {
   const requestRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowSuggestions(false)
+        inputRef.current?.blur()
+        return
+      }
+
+      if (
+        event.key !== '/' ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey
+      ) return
+
+      const target = event.target
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+      ) return
+
+      event.preventDefault()
+      inputRef.current?.focus()
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
     if (requestRef.current) requestRef.current.abort()
 
@@ -132,20 +161,20 @@ export default function Navbar() {
               aria-expanded={showSuggestions && suggestions.length > 0}
               aria-controls="lorezone-search-suggestions"
             />
-            <kbd>/</kbd>
+            <kbd aria-label="Press slash to focus search">/</kbd>
           </form>
 
           {showSuggestions && suggestions.length > 0 ? (
             <div className="search-popover" id="lorezone-search-suggestions">
               <p className="search-popover__label">QUICK DISCOVERY</p>
               {suggestions.map(item => {
-                const image =
-                  item.images?.webp?.image_url || item.images?.jpg?.image_url
+                const image = item.images?.webp?.image_url || item.images?.jpg?.image_url
                 return (
                   <button
                     type="button"
                     key={`${item.kind}-${item.mal_id}`}
-                    onMouseDown={() => chooseSuggestion(item)}
+                    onMouseDown={event => event.preventDefault()}
+                    onClick={() => chooseSuggestion(item)}
                     className="search-suggestion"
                   >
                     <span className="search-suggestion__image">
@@ -163,7 +192,19 @@ export default function Navbar() {
                   </button>
                 )
               })}
-              <button type="button" className="search-popover__all" onMouseDown={submitSearch}>
+              <button
+                type="button"
+                className="search-popover__all"
+                onMouseDown={event => event.preventDefault()}
+                onClick={() => {
+                  const trimmed = query.trim()
+                  if (!trimmed) return
+                  router.push(`/search?q=${encodeURIComponent(trimmed)}`)
+                  setQuery('')
+                  setSuggestions([])
+                  setShowSuggestions(false)
+                }}
+              >
                 See every result for “{query.trim()}” <span>↗</span>
               </button>
             </div>

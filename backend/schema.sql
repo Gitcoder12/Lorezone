@@ -1,9 +1,5 @@
 -- LoreZone Database Schema
 -- Run: psql -U postgres -f schema.sql
-
-CREATE DATABASE lorezone;
-\c lorezone;
-
 -- Franchises (e.g., "Naruto", "Marvel", "Bleach")
 CREATE TABLE franchises (
     id SERIAL PRIMARY KEY,

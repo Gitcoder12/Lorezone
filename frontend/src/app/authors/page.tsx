@@ -175,7 +175,7 @@ export default function AuthorsPage() {
                 ✍️
               </div>
               <p className="font-semibold text-sm mb-0.5">{c.name}</p>
-              <p className="text-xs text-[#e24b4a]">{c.known_for}</p>
+              <p className="text-xs text-[#ff6b3d]">{c.known_for}</p>
               <p className="text-xs text-white/30 mt-0.5">{c.role}</p>
             </button>
           ))}

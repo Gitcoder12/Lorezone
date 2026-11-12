@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
-import { Search, Menu, X, ChevronDown } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { ArrowUpRight, Menu, Search, Sparkles, X } from 'lucide-react'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
@@ -11,151 +12,206 @@ interface Suggestion {
   mal_id: number
   title: string
   title_english?: string
-  type: string
-  images?: { jpg: { image_url: string } }
+  type?: string
+  images?: { jpg?: { image_url?: string }; webp?: { image_url?: string } }
   kind: 'anime' | 'manga'
 }
 
+const links = [
+  { href: '/browse/anime', label: 'Anime' },
+  { href: '/browse/manga', label: 'Manga' },
+  { href: '/franchises', label: 'Universes' },
+  { href: '/schedule', label: 'Schedule' },
+]
+
 export default function Navbar() {
   const [query, setQuery] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-  const [showSug, setShowSug] = useState(false)
-  const [browseOpen, setBrowseOpen] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const inputRef = useRef<HTMLInputElement>(null)
-  const debounceRef = useRef<NodeJS.Timeout>()
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const requestRef = useRef<AbortController | null>(null)
 
-  // Autocomplete
   useEffect(() => {
-    clearTimeout(debounceRef.current)
-    if (query.length < 2) { setSuggestions([]); setShowSug(false); return }
-    debounceRef.current = setTimeout(async () => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    if (requestRef.current) requestRef.current.abort()
+
+    const trimmed = query.trim()
+    if (trimmed.length < 2) {
+      setSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    timerRef.current = setTimeout(async () => {
+      const controller = new AbortController()
+      requestRef.current = controller
       try {
-        const res = await fetch(`${API}/api/live/search?q=${encodeURIComponent(query)}`)
-        const data = await res.json()
-        const anime = (data.anime || []).slice(0, 4).map((a: Suggestion) => ({ ...a, kind: 'anime' }))
-        const manga = (data.manga || []).slice(0, 3).map((m: Suggestion) => ({ ...m, kind: 'manga' }))
+        const response = await fetch(
+          \`\${API}/api/live/search?q=\${encodeURIComponent(trimmed)}\`,
+          { signal: controller.signal }
+        )
+        if (!response.ok) throw new Error('Search request failed')
+        const data = await response.json()
+        const anime = (data.anime || []).slice(0, 4).map((item: Omit<Suggestion, 'kind'>) => ({
+          ...item,
+          kind: 'anime' as const,
+        }))
+        const manga = (data.manga || []).slice(0, 3).map((item: Omit<Suggestion, 'kind'>) => ({
+          ...item,
+          kind: 'manga' as const,
+        }))
         setSuggestions([...anime, ...manga])
-        setShowSug(true)
-      } catch { }
-    }, 350)
+        setShowSuggestions(true)
+      } catch (error) {
+        if (!(error instanceof Error && error.name === 'AbortError')) {
+          setSuggestions([])
+          setShowSuggestions(false)
+        }
+      }
+    }, 280)
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+      if (requestRef.current) requestRef.current.abort()
+    }
   }, [query])
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`)
-      setQuery(''); setShowSug(false)
-    }
+  const submitSearch = (event: FormEvent) => {
+    event.preventDefault()
+    const trimmed = query.trim()
+    if (!trimmed) return
+    router.push(\`/search?q=\${encodeURIComponent(trimmed)}\`)
+    setQuery('')
+    setSuggestions([])
+    setShowSuggestions(false)
+    setMenuOpen(false)
   }
 
-  const pickSuggestion = (s: Suggestion) => {
-    router.push(`/live/${s.kind}/${s.mal_id}`)
-    setQuery(''); setShowSug(false)
+  const chooseSuggestion = (item: Suggestion) => {
+    router.push(\`/live/\${item.kind}/\${item.mal_id}\`)
+    setQuery('')
+    setSuggestions([])
+    setShowSuggestions(false)
+    setMenuOpen(false)
   }
 
-  const navLinks = [
-    { href: '/browse', label: 'Browse' },
-    { href: '/upcoming', label: 'Upcoming' },
-    { href: '/schedule', label: 'Schedule' },
-    { href: '/authors', label: 'Creators' },
-  ]
+  const active = (href: string) =>
+    pathname === href || (href !== '/' && pathname.startsWith(href))
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#0f0f0f]/90 backdrop-blur border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
-        {/* Logo */}
-        <Link href="/" className="font-syne text-2xl font-bold shrink-0 mr-2">
-          Lore<span className="text-[#e24b4a]">Zone</span>
+    <header className="site-header">
+      <div className="site-header__inner">
+        <Link href="/" className="brand-mark" aria-label="LoreZone home">
+          <span className="brand-mark__symbol">L</span>
+          <span className="brand-mark__word">LORE<span>ZONE</span></span>
         </Link>
 
-        {/* Search */}
-        <div className="relative flex-1 max-w-md hidden md:block">
-          <form onSubmit={handleSearch}>
-            <div className="relative">
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onFocus={() => suggestions.length > 0 && setShowSug(true)}
-                onBlur={() => setTimeout(() => setShowSug(false), 150)}
-                placeholder="Search anime, manga, creators..."
-                className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:border-[#e24b4a]/50 placeholder-white/25 transition"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-            </div>
-          </form>
-
-          {/* Suggestions dropdown */}
-          {showSug && suggestions.length > 0 && (
-            <div className="absolute top-full mt-2 w-full bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-              {suggestions.map((s, i) => (
-                <button
-                  key={i}
-                  onMouseDown={() => pickSuggestion(s)}
-                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 text-left transition"
-                >
-                  {s.images?.jpg?.image_url && (
-                    <img src={s.images.jpg.image_url} alt="" className="w-8 h-10 object-cover rounded shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">{s.title_english || s.title}</p>
-                    <p className="text-[10px] text-white/30 capitalize">{s.kind} · {s.type}</p>
-                  </div>
-                </button>
-              ))}
-              <button
-                onMouseDown={() => { router.push(`/search?q=${encodeURIComponent(query)}`); setQuery(''); setShowSug(false) }}
-                className="w-full px-3 py-2 text-xs text-[#e24b4a] hover:bg-white/5 text-left border-t border-white/5"
-              >
-                See all results for "{query}" →
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Nav links */}
-        <div className="hidden md:flex items-center gap-1 ml-auto">
-          {navLinks.map(l => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`px-3 py-1.5 rounded-lg text-sm transition ${
-                pathname === l.href ? 'text-white bg-white/5' : 'text-white/50 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {l.label}
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {links.map(link => (
+            <Link key={link.href} href={link.href} className={active(link.href) ? 'is-active' : ''}>
+              {link.label}
             </Link>
           ))}
+        </nav>
+
+        <div className="header-search-wrap">
+          <form className="header-search" onSubmit={submitSearch} role="search">
+            <Search size={16} aria-hidden="true" />
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={event => setQuery(event.target.value)}
+              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+              onBlur={() => window.setTimeout(() => setShowSuggestions(false), 160)}
+              placeholder="Find a story, world, creator..."
+              aria-label="Search LoreZone"
+              aria-expanded={showSuggestions && suggestions.length > 0}
+              aria-controls="lorezone-search-suggestions"
+            />
+            <kbd>/</kbd>
+          </form>
+
+          {showSuggestions && suggestions.length > 0 ? (
+            <div className="search-popover" id="lorezone-search-suggestions">
+              <p className="search-popover__label">QUICK DISCOVERY</p>
+              {suggestions.map(item => {
+                const image =
+                  item.images?.webp?.image_url || item.images?.jpg?.image_url
+                return (
+                  <button
+                    type="button"
+                    key={\`\${item.kind}-\${item.mal_id}\`}
+                    onMouseDown={() => chooseSuggestion(item)}
+                    className="search-suggestion"
+                  >
+                    <span className="search-suggestion__image">
+                      {image ? (
+                        <Image src={image} alt="" fill sizes="42px" />
+                      ) : (
+                        <Sparkles size={16} />
+                      )}
+                    </span>
+                    <span className="search-suggestion__copy">
+                      <strong>{item.title_english || item.title}</strong>
+                      <small>{item.kind} · {item.type || 'Catalogue entry'}</small>
+                    </span>
+                    <ArrowUpRight size={15} />
+                  </button>
+                )
+              })}
+              <button type="button" className="search-popover__all" onMouseDown={submitSearch}>
+                See every result for “{query.trim()}” <span>↗</span>
+              </button>
+            </div>
+          ) : null}
         </div>
 
-        {/* Mobile menu button */}
-        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden ml-auto text-white/60 hover:text-white">
-          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        <Link href="/franchises" className="header-cta">
+          Explore worlds <ArrowUpRight size={15} />
+        </Link>
+
+        <button
+          type="button"
+          className="mobile-menu-button"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(open => !open)}
+        >
+          {menuOpen ? <X size={21} /> : <Menu size={21} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-[#1a1a1a] border-t border-white/5 px-4 py-4 flex flex-col gap-3">
-          <form onSubmit={handleSearch} className="flex gap-2">
+      {menuOpen ? (
+        <div className="mobile-nav">
+          <form className="mobile-nav__search" onSubmit={submitSearch}>
+            <Search size={17} />
             <input
-              type="text" value={query} onChange={e => setQuery(e.target.value)}
-              placeholder="Search..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm focus:outline-none"
+              value={query}
+              onChange={event => setQuery(event.target.value)}
+              placeholder="Search the storyverse..."
+              aria-label="Search LoreZone"
             />
-            <button type="submit" className="bg-[#e24b4a] rounded-full px-4 py-2 text-sm">Go</button>
+            <button type="submit">Search</button>
           </form>
-          {navLinks.map(l => (
-            <Link key={l.href} href={l.href} className="text-white/60 hover:text-white py-1" onClick={() => setMenuOpen(false)}>
-              {l.label}
+          {links.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={active(link.href) ? 'is-active' : ''}
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}<ArrowUpRight size={16} />
             </Link>
           ))}
+          <Link href="/franchises" className="mobile-nav__feature" onClick={() => setMenuOpen(false)}>
+            Explore connected universes <span>↗</span>
+          </Link>
         </div>
-      )}
-    </nav>
+      ) : null}
+    </header>
   )
 }

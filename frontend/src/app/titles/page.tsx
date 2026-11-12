@@ -1,67 +1,106 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { ArrowUpRight } from 'lucide-react'
 import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
 import TitleCard from '../../components/TitleCard'
 import { Title, MediaType } from '../types'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
-const MEDIA_TYPES: MediaType[] = ['anime', 'manga', 'movie', 'ova', 'ona', 'special', 'manhwa', 'novel', 'spin_off']
+const MEDIA_TYPES: MediaType[] = [
+  'anime', 'manga', 'movie', 'ova', 'ona', 'special',
+  'manhwa', 'novel', 'spin_off', 'comic', 'game', 'series',
+]
 
 export default function TitlesPage() {
   const [titles, setTitles] = useState<Title[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<string>('all')
+  const [error, setError] = useState(false)
+  const [filter, setFilter] = useState('all')
 
   useEffect(() => {
+    const controller = new AbortController()
     setLoading(true)
-    const url = filter === 'all'
-      ? `${API}/api/titles?limit=60`
-      : `${API}/api/titles?media_type=${filter}&limit=60`
-    fetch(url)
-      .then(r => r.json())
-      .then(d => { setTitles(d.data || []); setLoading(false) })
-      .catch(() => setLoading(false))
+    setError(false)
+    const endpoint = filter === 'all'
+      ? \`\${API}/api/titles?limit=60\`
+      : \`\${API}/api/titles?media_type=\${encodeURIComponent(filter)}&limit=60\`
+
+    fetch(endpoint, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) throw new Error('Could not load catalogue')
+        return response.json()
+      })
+      .then(data => {
+        if (!controller.signal.aborted) setTitles(data.data || [])
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setError(true)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+
+    return () => controller.abort()
   }, [filter])
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-10">
-        <h1 className="font-syne text-4xl font-bold mb-2">Browse Titles</h1>
-        <p className="text-white/40 mb-6 text-sm">All anime, manga, movies, and spinoffs in the database</p>
+      <main className="page-shell">
+        <section className="page-intro">
+          <p className="eyebrow">THE LOREZONE LIBRARY</p>
+          <h1>Browse the catalogue.</h1>
+          <p>Explore the original works, adaptations, films and spin-offs connected to the universes in LoreZone.</p>
+          <div className="catalogue-intro-stat"><span>{titles.length}</span> {loading ? 'Loading titles' : 'titles in this view'}</div>
+        </section>
 
-        {/* Filter tabs */}
-        <div className="flex gap-1 overflow-x-auto border-b border-white/5 mb-6">
-          {['all', ...MEDIA_TYPES].map(t => (
+        <div className="filter-row" role="tablist" aria-label="Filter catalogue by media type">
+          {['all', ...MEDIA_TYPES].map(type => (
             <button
-              key={t}
-              onClick={() => setFilter(t)}
-              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                filter === t
-                  ? 'border-[#e24b4a] text-white'
-                  : 'border-transparent text-white/40 hover:text-white/70'
-              }`}
+              key={type}
+              type="button"
+              role="tab"
+              aria-selected={filter === type}
+              onClick={() => setFilter(type)}
+              className={\`filter-pill \${filter === type ? 'is-active' : ''}\`}
             >
-              {t === 'all' ? 'All' : t.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              {type === 'all' ? 'Everything' : type.replace('_', ' ').replace(/\b\w/g, char => char.toUpperCase())}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <div key={i} className="aspect-[2/3] bg-white/5 rounded-xl animate-pulse" />
+          <div className="title-library-grid">
+            {Array.from({ length: 18 }).map((_, index) => (
+              <div key={index} className="poster-skeleton">
+                <div className="poster-skeleton__image" />
+                <div className="poster-skeleton__line" />
+                <div className="poster-skeleton__line poster-skeleton__line--short" />
+              </div>
             ))}
           </div>
+        ) : error ? (
+          <div className="directory-empty">
+            <h2>We couldn’t load the catalogue.</h2>
+            <p>Check that the LoreZone API and database are available, then refresh.</p>
+            <button type="button" className="secondary-button" onClick={() => window.location.reload()}>
+              Try again <ArrowUpRight size={14} />
+            </button>
+          </div>
         ) : titles.length === 0 ? (
-          <p className="text-white/30 text-sm py-8 text-center">No titles found</p>
+          <div className="directory-empty">
+            <h2>No titles in this section yet.</h2>
+            <p>Try another media type or explore the live anime and manga catalogue.</p>
+          </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {titles.map(t => <TitleCard key={t.id} title={t} />)}
+          <div className="title-library-grid">
+            {titles.map(title => <TitleCard key={title.id} title={title} />)}
           </div>
         )}
-      </div>
+      </main>
+      <Footer />
     </div>
   )
 }

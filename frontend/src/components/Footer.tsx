@@ -1,20 +1,46 @@
 import Link from 'next/link'
+import { ArrowUpRight, Github, Sparkles } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/5 mt-20 py-10 px-4">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <span className="font-syne text-xl font-bold">Lore<span className="text-[#e24b4a]">Zone</span></span>
-          <p className="text-xs text-white/30 mt-1">Every universe. Connected.</p>
+    <footer className="site-footer">
+      <div className="site-footer__main">
+        <div className="site-footer__brand">
+          <Link href="/" className="brand-mark" aria-label="LoreZone home">
+            <span className="brand-mark__symbol">L</span>
+            <span className="brand-mark__word">LORE<span>ZONE</span></span>
+          </Link>
+          <p>Every world has a story.<br />Every story has a place.</p>
         </div>
-        <div className="flex gap-6 text-sm text-white/30">
-          <Link href="/franchises" className="hover:text-white transition">Franchises</Link>
-          <Link href="/titles" className="hover:text-white transition">Titles</Link>
-          <Link href="/search" className="hover:text-white transition">Search</Link>
-          <a href="https://github.com/Gitcoder12/Lorezone" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">GitHub</a>
+
+        <div className="site-footer__links">
+          <div>
+            <span className="site-footer__label">DISCOVER</span>
+            <Link href="/browse/anime">Anime</Link>
+            <Link href="/browse/manga">Manga</Link>
+            <Link href="/franchises">Universes</Link>
+          </div>
+          <div>
+            <span className="site-footer__label">EXPLORE</span>
+            <Link href="/titles">All titles</Link>
+            <Link href="/schedule">Release schedule</Link>
+            <Link href="/search">Search catalogue</Link>
+          </div>
         </div>
-        <p className="text-xs text-white/20">Built by Gitcoder12 · Data via Jikan/MAL</p>
+
+        <a
+          className="site-footer__github"
+          href="https://github.com/Gitcoder12/Lorezone"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Github size={17} /> View the project <ArrowUpRight size={15} />
+        </a>
+      </div>
+
+      <div className="site-footer__bottom">
+        <span>© {new Date().getFullYear()} LoreZone. Built for the curious.</span>
+        <span><Sparkles size={13} /> Catalogue data by Jikan & AniList</span>
       </div>
     </footer>
   )

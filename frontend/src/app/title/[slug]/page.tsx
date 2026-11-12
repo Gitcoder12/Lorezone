@@ -1,16 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowLeft, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, ExternalLink, Star } from 'lucide-react'
 import Navbar from '../../../components/Navbar'
+import Footer from '../../../components/Footer'
 import MediaBadge from '../../../components/MediaBadge'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
-interface Connection {
+interface ConnectionRecord {
   id: number
   connection_type: string
   description: string
@@ -43,6 +44,7 @@ interface FullTitle {
   slug: string
   media_type: string
   release_date: string
+  end_date?: string
   studio: string
   author: string
   artist: string
@@ -53,213 +55,269 @@ interface FullTitle {
   runtime_minutes: number | null
   synopsis: string
   cover_image: string
+  banner_image?: string
   trailer_url: string
   avg_rating: number
   language: string
   is_completed: boolean
   tags: { id: number; name: string }[]
-  connections: { outgoing: Connection[]; incoming: Connection[] }
+  connections: { outgoing: ConnectionRecord[]; incoming: ConnectionRecord[] }
   reviews: Review[]
 }
 
+interface RelatedTitle {
+  id: number
+  name?: string
+  slug?: string
+  type?: string
+  cover?: string
+  connection_type: string
+  description?: string
+}
+
 export default function TitlePage() {
-  const { slug } = useParams()
+  const params = useParams()
+  const slug = params.slug as string
   const [title, setTitle] = useState<FullTitle | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch(`${API}/api/titles/${slug}`)
-      .then(r => r.json())
-      .then(d => { setTitle(d); setLoading(false) })
-      .catch(() => setLoading(false))
+    if (!slug) return
+    const controller = new AbortController()
+    setLoading(true)
+    fetch(\`\${API}/api/titles/\${encodeURIComponent(slug)}\`, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) throw new Error('Title not found')
+        return response.json()
+      })
+      .then(data => {
+        if (!controller.signal.aborted) setTitle(data)
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setError(true)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
   }, [slug])
+
+  const related = useMemo<RelatedTitle[]>(() => {
+    if (!title?.connections) return []
+    const outgoing = (title.connections.outgoing || []).map(connection => ({
+      id: connection.id,
+      name: connection.target_title,
+      slug: connection.target_slug,
+      type: connection.target_media_type,
+      cover: connection.target_cover,
+      connection_type: connection.connection_type,
+      description: connection.description,
+    }))
+    const incoming = (title.connections.incoming || []).map(connection => ({
+      id: connection.id,
+      name: connection.source_title,
+      slug: connection.source_slug,
+      type: connection.source_media_type,
+      cover: connection.source_cover,
+      connection_type: connection.connection_type,
+      description: connection.description,
+    }))
+    return [...outgoing, ...incoming]
+  }, [title])
+
+  const grouped = useMemo(() => related.reduce((groups, item) => {
+    const key = item.connection_type || 'related'
+    if (!groups[key]) groups[key] = []
+    groups[key].push(item)
+    return groups
+  }, {} as Record<string, RelatedTitle[]>), [related])
 
   if (loading) {
     return (
       <div className="min-h-screen">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 py-12 animate-pulse">
-          <div className="h-6 bg-white/5 rounded w-32 mb-6" />
-          <div className="flex gap-6">
-            <div className="w-40 aspect-[2/3] bg-white/5 rounded-xl shrink-0" />
-            <div className="flex-1 space-y-3">
-              <div className="h-8 bg-white/5 rounded w-3/4" />
-              <div className="h-4 bg-white/5 rounded w-1/2" />
-              <div className="h-24 bg-white/5 rounded" />
-            </div>
-          </div>
+        <div className="page-shell title-loading">
+          <div className="title-loading__poster" />
+          <div className="title-loading__copy"><i /><i /><i /></div>
         </div>
+        <Footer />
       </div>
     )
   }
 
-  if (!title) {
+  if (error || !title) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-white/40 mb-4">Title not found</p>
-            <Link href="/" className="text-[#e24b4a] hover:underline">Go home</Link>
-          </div>
-        </div>
+        <main className="directory-empty page-shell">
+          <p className="eyebrow">STORY NOT FOUND</p>
+          <h1>This chapter is missing.</h1>
+          <p>It may not be in the catalogue yet, or the service may be unavailable.</p>
+          <Link href="/titles" className="secondary-button"><ArrowLeft size={15} /> Back to titles</Link>
+        </main>
+        <Footer />
       </div>
     )
   }
 
-  const allConnections = [
-    ...(title.connections?.outgoing || []).map(c => ({
-      ...c, name: c.target_title, slug: c.target_slug, type: c.target_media_type, cover: c.target_cover,
-    })),
-    ...(title.connections?.incoming || []).map(c => ({
-      ...c, name: c.source_title, slug: c.source_slug, type: c.source_media_type, cover: c.source_cover,
-    })),
-  ]
-
-  const groupedConnections = allConnections.reduce((acc, c) => {
-    const key = c.connection_type
-    if (!acc[key]) acc[key] = []
-    acc[key].push(c)
-    return acc
-  }, {} as Record<string, typeof allConnections>)
-
+  const poster = title.cover_image
+  const backdrop = title.banner_image || poster
+  const releaseYear = title.release_date ? new Date(title.release_date).getFullYear() : null
   const meta: [string, string | number][] = [
-    ['Studio', title.studio], ['Author', title.author], ['Artist', title.artist],
-    ['Publisher', title.publisher], ['Episodes', title.episode_count!],
-    ['Chapters', title.chapter_count!], ['Volumes', title.volume_count!],
-    ['Runtime', title.runtime_minutes ? `${title.runtime_minutes} min` : ''],
-    ['Language', title.language], ['Status', title.is_completed ? 'Completed' : 'Ongoing'],
-    ['Released', title.release_date ? title.release_date.slice(0, 10) : ''],
-  ].filter(([, v]) => v) as [string, string | number][]
+    ['Studio', title.studio],
+    ['Author', title.author],
+    ['Artist', title.artist],
+    ['Publisher', title.publisher],
+    ['Episodes', title.episode_count || ''],
+    ['Chapters', title.chapter_count || ''],
+    ['Volumes', title.volume_count || ''],
+    ['Runtime', title.runtime_minutes ? \`\${title.runtime_minutes} min\` : ''],
+    ['Language', title.language],
+    ['Status', title.is_completed ? 'Completed' : 'Ongoing'],
+    ['Released', releaseYear || ''],
+  ].filter(([, value]) => Boolean(value)) as [string, string | number][]
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="flex items-center gap-2 text-sm text-white/30 mb-6">
-          {title.franchise_name && (
-            <>
-              <Link href={`/franchise/${title.franchise_slug}`} className="hover:text-white transition">
-                {title.franchise_name}
-              </Link>
-              <span>/</span>
-            </>
-          )}
-          <span className="text-white/60">{title.title}</span>
-        </div>
-
-        <div className="flex gap-6 mb-8">
-          <div className="relative w-36 md:w-44 aspect-[2/3] rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/5 shrink-0">
-            {title.cover_image ? (
-              <Image src={title.cover_image} alt={title.title} fill className="object-cover" />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-4xl">
-                {['anime', 'movie', 'ova'].includes(title.media_type) ? '🎬' : '📖'}
+      <main>
+        <section className="title-backdrop">
+          {backdrop ? (
+            <div className="title-backdrop__art">
+              <Image src={backdrop} alt="" fill priority sizes="100vw" />
+            </div>
+          ) : null}
+          <div className="title-backdrop__shade" />
+          <div className="title-backdrop__content">
+            <div className="title-poster">
+              {poster ? <Image src={poster} alt={title.title} fill priority sizes="190px" /> : null}
+            </div>
+            <div className="title-main">
+              <div className="title-breadcrumbs">
+                <Link href="/titles">Catalogue</Link><span>/</span>
+                {title.franchise_name && title.franchise_slug ? (
+                  <><Link href={\`/franchise/\${title.franchise_slug}\`}>{title.franchise_name}</Link><span>/</span></>
+                ) : null}
+                <span>{title.title}</span>
               </div>
-            )}
+              <div className="title-badges">
+                <MediaBadge type={title.media_type} />
+                {title.is_completed ? <span className="completion-badge">Completed</span> : <span className="completion-badge completion-badge--live">Ongoing</span>}
+              </div>
+              <h1>{title.title}</h1>
+              {title.franchise_name ? <p className="title-franchise-name">{title.franchise_name} universe</p> : null}
+              <div className="title-main__rating">
+                {title.avg_rating ? <><Star size={16} fill="currentColor" /><strong>{Number(title.avg_rating).toFixed(1)}</strong><span>/ 10</span></> : <span>Rating not available</span>}
+                {releaseYear ? <><i />{releaseYear}</> : null}
+              </div>
+              {title.tags?.length ? (
+                <div className="title-tag-list">
+                  {title.tags.slice(0, 6).map(tag => <span key={tag.id}>{tag.name}</span>)}
+                </div>
+              ) : null}
+              {title.trailer_url ? (
+                <a href={title.trailer_url} target="_blank" rel="noopener noreferrer" className="primary-button title-trailer">
+                  Watch trailer <ExternalLink size={14} />
+                </a>
+              ) : null}
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <MediaBadge type={title.media_type} />
-              {title.is_completed && (
-                <span className="text-xs px-2 py-0.5 bg-green-500/10 text-green-400 rounded">Completed</span>
+        </section>
+
+        <div className="page-shell title-detail-content">
+          <div className="title-detail-main">
+            {title.synopsis ? (
+              <section className="title-story-block">
+                <p className="eyebrow">THE STORY</p>
+                <h2>About this title</h2>
+                <p>{title.synopsis}</p>
+              </section>
+            ) : null}
+
+            {meta.length ? (
+              <section className="detail-panel">
+                <p className="eyebrow">AT A GLANCE</p>
+                <h2>Title information</h2>
+                <div className="detail-grid">
+                  {meta.map(([key, value]) => (
+                    <div key={key}><small>{key}</small><strong>{value}</strong></div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {Object.keys(grouped).length ? (
+              <section className="related-section">
+                <div className="section-heading">
+                  <div><p className="eyebrow">FOLLOW THE THREAD</p><h2>Connected stories</h2></div>
+                  <span className="catalogue-total">{related.length} links</span>
+                </div>
+                <div className="related-groups">
+                  {Object.entries(grouped).map(([kind, items]) => (
+                    <div className="related-group" key={kind}>
+                      <p className="related-group__label">{kind.replace('_', ' ')}</p>
+                      <div className="related-grid">
+                        {items.map((item, index) => (
+                          item.slug ? (
+                            <Link href={\`/title/\${item.slug}\`} className="related-card" key={\`\${item.id}-\${index}\`}>
+                              <span className="related-card__image">
+                                {item.cover ? <Image src={item.cover} alt="" fill sizes="64px" /> : null}
+                              </span>
+                              <span className="related-card__copy">
+                                <strong>{item.name || 'Untitled entry'}</strong>
+                                {item.type ? <small>{item.type}</small> : null}
+                                {item.description ? <small>{item.description}</small> : null}
+                              </span>
+                              <ArrowUpRight size={15} />
+                            </Link>
+                          ) : null
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {title.reviews?.length ? (
+              <section className="related-section">
+                <div className="section-heading"><div><p className="eyebrow">FROM THE COMMUNITY</p><h2>Reviews</h2></div></div>
+                <div className="review-list">
+                  {title.reviews.map(review => (
+                    <article className="review-card" key={review.id}>
+                      <div className="review-card__top">
+                        <strong>{review.username}</strong>
+                        <span><Star size={12} fill="currentColor" /> {review.rating}/10</span>
+                      </div>
+                      {review.spoiler ? <small className="spoiler-label">Contains spoilers</small> : null}
+                      <p>{review.content}</p>
+                      <time>{new Date(review.created_at).toLocaleDateString()}</time>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </div>
+          <aside className="title-detail-aside">
+            <div className="detail-aside-card">
+              <p className="eyebrow">KEEP EXPLORING</p>
+              <h3>There’s more to this universe.</h3>
+              <p>See the other titles connected to this story, all in one place.</p>
+              {title.franchise_slug ? (
+                <Link href={\`/franchise/\${title.franchise_slug}\`} className="secondary-button">
+                  Open universe <ArrowUpRight size={14} />
+                </Link>
+              ) : (
+                <Link href="/franchises" className="secondary-button">
+                  Explore universes <ArrowUpRight size={14} />
+                </Link>
               )}
             </div>
-            <h1 className="font-syne text-2xl md:text-3xl font-bold mb-1">{title.title}</h1>
-            {title.franchise_name && <p className="text-sm text-white/40 mb-3">{title.franchise_name}</p>}
-            {title.avg_rating && (
-              <div className="flex items-center gap-1 mb-3">
-                <span className="text-yellow-400 text-lg">★</span>
-                <span className="font-bold text-xl">{title.avg_rating}</span>
-                <span className="text-white/30 text-sm">/ 10</span>
-              </div>
-            )}
-            {title.tags && title.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                {title.tags.map(tag => (
-                  <span key={tag.id} className="text-xs px-2 py-0.5 bg-white/5 rounded text-white/40">{tag.name}</span>
-                ))}
-              </div>
-            )}
-            {title.trailer_url && (
-              <a href={title.trailer_url} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-[#e24b4a] hover:underline">
-                <ExternalLink className="w-3.5 h-3.5" /> Watch Trailer
-              </a>
-            )}
-          </div>
+          </aside>
         </div>
-
-        {title.synopsis && (
-          <div className="mb-8">
-            <h2 className="font-syne text-lg font-bold mb-3">Synopsis</h2>
-            <p className="text-white/60 text-sm leading-relaxed">{title.synopsis}</p>
-          </div>
-        )}
-
-        {meta.length > 0 && (
-          <div className="mb-8 bg-[#1a1a1a] border border-white/5 rounded-xl p-5">
-            <h2 className="font-syne text-base font-bold mb-4">Details</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-6">
-              {meta.map(([key, val]) => (
-                <div key={key}>
-                  <p className="text-xs text-white/30 mb-0.5">{key}</p>
-                  <p className="text-sm font-medium">{val}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {Object.keys(groupedConnections).length > 0 && (
-          <div className="mb-8">
-            <h2 className="font-syne text-lg font-bold mb-4">Related & Spinoffs</h2>
-            <div className="space-y-5">
-              {Object.entries(groupedConnections).map(([type, items]) => (
-                <div key={type}>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-2">
-                    {type.replace('_', ' ')}
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    {items.map((c, i) => (
-                      <Link key={i} href={`/title/${c.slug}`}
-                        className="flex items-center gap-2 bg-[#1a1a1a] border border-white/5 rounded-lg px-3 py-2 hover:border-white/15 transition">
-                        {c.cover && (
-                          <div className="relative w-8 h-10 rounded overflow-hidden shrink-0">
-                            <Image src={c.cover} alt="" fill className="object-cover" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-xs font-medium leading-snug max-w-[140px] line-clamp-2">{c.name}</p>
-                          {c.type && <MediaBadge type={c.type} small />}
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {title.reviews && title.reviews.length > 0 && (
-          <div>
-            <h2 className="font-syne text-lg font-bold mb-4">Reviews</h2>
-            <div className="space-y-3">
-              {title.reviews.map(r => (
-                <div key={r.id} className="bg-[#1a1a1a] border border-white/5 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-sm">{r.username}</span>
-                    <span className="text-yellow-400 text-sm">★ {r.rating}/10</span>
-                  </div>
-                  {r.spoiler && <span className="text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded mb-2 inline-block">Spoiler</span>}
-                  <p className="text-sm text-white/50 leading-relaxed">{r.content}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      </main>
+      <Footer />
     </div>
   )
 }

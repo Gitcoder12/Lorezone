@@ -41,7 +41,7 @@ export default function AnimeDetailPage() {
     <div className="min-h-screen flex flex-col"><Navbar />
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center"><p className="text-white/40 mb-4">Not found</p>
-          <button onClick={() => router.back()} className="text-[#e24b4a] hover:underline">Go back</button>
+          <button onClick={() => router.back()} className="text-[#ff6b3d] hover:underline">Go back</button>
         </div>
       </div>
     </div>
@@ -74,7 +74,7 @@ export default function AnimeDetailPage() {
         {banner ? (
           <Image src={banner} alt="" fill className="object-cover object-center" priority />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#e24b4a]/20 to-[#0f0f0f]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#ff6b3d]/20 to-[#0f0f0f]" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
         <button onClick={() => router.back()}
@@ -128,7 +128,7 @@ export default function AnimeDetailPage() {
             <div className="flex flex-wrap gap-2">
               {trailer && (
                 <a href={trailer} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 bg-[#e24b4a] hover:bg-[#c93e3d] transition rounded-full px-4 py-2 text-sm font-medium">
+                  className="flex items-center gap-1.5 bg-[#ff6b3d] hover:bg-[#e85a2b] transition rounded-full px-4 py-2 text-sm font-medium">
                   <Play className="w-3.5 h-3.5" /> Watch Trailer
                 </a>
               )}
@@ -153,7 +153,7 @@ export default function AnimeDetailPage() {
           {(['overview', 'characters', 'relations'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-4 py-2.5 text-sm font-medium capitalize border-b-2 transition-colors ${
-                tab === t ? 'border-[#e24b4a] text-white' : 'border-transparent text-white/40 hover:text-white/70'
+                tab === t ? 'border-[#ff6b3d] text-white' : 'border-transparent text-white/40 hover:text-white/70'
               }`}>
               {t} {t === 'characters' && characters.length > 0 && <span className="text-white/25 text-xs ml-1">{characters.length}</span>}
               {t === 'relations' && relations.length > 0 && <span className="text-white/25 text-xs ml-1">{relations.length}</span>}

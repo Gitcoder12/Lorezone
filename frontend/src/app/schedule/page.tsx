@@ -51,7 +51,7 @@ export default function SchedulePage() {
               key={d}
               onClick={() => setDay(d)}
               className={`px-5 py-3 text-sm font-medium capitalize whitespace-nowrap border-b-2 transition-colors ${
-                day === d ? 'border-[#e24b4a] text-white' : 'border-transparent text-white/40 hover:text-white/70'
+                day === d ? 'border-[#ff6b3d] text-white' : 'border-transparent text-white/40 hover:text-white/70'
               }`}
             >
               {d}

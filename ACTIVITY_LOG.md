@@ -17,3 +17,12 @@ Next.js frontend, Express/TypeScript backend and PostgreSQL data model. It uses 
 | YYYY-MM-DD | name | link | paths | exact command | pass / fail / not run | evidence |
 
 Record vulnerabilities, remediation, tests and limitations. Never claim secure production deployment until authentication, CORS, dependency and API checks have actually passed.
+
+## Portfolio documentation rollout — 2026-11-13
+
+- Documentation PR: https://github.com/Gitcoder12/Lorezone/pull/4
+- Added a project-specific feature plan, company-fit mapping, two-level README explanation and quality checklist.
+- Added or preserved contributor instructions and scoped agent/skills guidance as shown in the PR diff.
+- README now explains the project in plain language and provides a technical/research view while retaining existing setup details.
+- Validation: documentation/source review only; no application runtime test or deployment is claimed by this docs PR.
+- Status: draft PR, not merged.

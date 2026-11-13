@@ -134,24 +134,3 @@ The Docker Compose credentials are intended for a local development environment 
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
----
-
-## Project handbook
-
-- [Activity log](ACTIVITY_LOG.md) · [Feature upgrade plan](FEATURE_UPGRADE_PLAN.md)
-- [Company and team fit](COMPANY_FIT.md) · [README explanation draft](README_ADDENDUM_DRAFT.md)
-- [README quality checklist](README_QUALITY_CHECKLIST.md)
-- [Contributing](CONTRIBUTING.md) · [Agent instructions](AGENTS.md) · [Agent skills](SKILLS.md)
-
-## Understanding the project
-
-### In plain language
-
-A website for browsing anime and manga, searching a catalogue and exploring related titles, franchises and timelines.
-
-### Technical and research view
-
-A visitor can browse and search anime/manga titles, open detail pages and explore connected franchise or timeline information. An account system supports registration and login. Live catalogue information depends on external providers.
-
-For future work, see [FEATURE_UPGRADE_PLAN.md](FEATURE_UPGRADE_PLAN.md), [ACTIVITY_LOG.md](ACTIVITY_LOG.md), [COMPANY_FIT.md](COMPANY_FIT.md) and [CONTRIBUTING.md](CONTRIBUTING.md).

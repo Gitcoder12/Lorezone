@@ -105,7 +105,7 @@ export default function LiveTitlePage() {
               <Image src={img} alt={title} fill className="object-cover" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-5xl">
-                {kind === 'anime' ? '🎬' : '📖'}
+                {kind === 'anime' ? '' : ''}
               </div>
             )}
           </div>
@@ -239,7 +239,7 @@ export default function LiveTitlePage() {
                       {c.character?.images?.jpg?.image_url ? (
                         <Image src={c.character.images.jpg.image_url} alt={c.character.name} fill className="object-cover object-top" sizes="200px" />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-3xl">👤</div>
+                        <div className="absolute inset-0 flex items-center justify-center text-3xl"></div>
                       )}
                     </div>
                     <div className="p-2.5">

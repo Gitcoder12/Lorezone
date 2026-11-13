@@ -57,7 +57,7 @@ export default function HomePage() {
           <Image src={item.images.jpg.image_url} alt={item.title} fill
             className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="200px" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-3xl">{kind === 'anime' ? '🎬' : '📖'}</div>
+          <div className="absolute inset-0 flex items-center justify-center text-3xl">{kind === 'anime' ? '' : ''}</div>
         )}
         {item.score && (
           <div className="absolute top-2 right-2 bg-black/70 backdrop-blur text-[10px] px-1.5 py-0.5 rounded text-yellow-400 font-bold">
@@ -130,11 +130,11 @@ export default function HomePage() {
 
           <div className="flex flex-wrap justify-center gap-3 mt-6">
             {[
-              { href: '/schedule', icon: '📅', label: 'Airing Schedule' },
-              { href: '/upcoming', icon: '🚀', label: 'Future Releases' },
-              { href: '/authors', icon: '✍️', label: 'Authors' },
-              { href: '/browse/anime', icon: '🎬', label: 'Top Anime' },
-              { href: '/browse/manga', icon: '📖', label: 'Top Manga' },
+              { href: '/schedule', icon: '', label: 'Airing Schedule' },
+              { href: '/upcoming', icon: '', label: 'Future Releases' },
+              { href: '/authors', icon: '', label: 'Authors' },
+              { href: '/browse/anime', icon: '', label: 'Top Anime' },
+              { href: '/browse/manga', icon: '', label: 'Top Manga' },
             ].map(({ href, icon, label }) => (
               <Link key={href} href={href}
                 className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 text-xs text-white/60 hover:text-white transition">
@@ -154,9 +154,9 @@ export default function HomePage() {
       <div className="border-t border-b border-white/5 py-14 px-4 my-6">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { emoji: '🔗', title: 'Connected Universes', desc: 'Every manga, anime, movie, OVA and spinoff linked together under one franchise page.', href: '/franchises' },
-            { emoji: '📅', title: 'Airing Schedule', desc: "See what's airing today, this week, and every day — with broadcast times.", href: '/schedule' },
-            { emoji: '🚀', title: 'Future Releases', desc: 'Track upcoming anime seasons and never miss an announcement again.', href: '/upcoming' },
+            { emoji: '', title: 'Connected Universes', desc: 'Every manga, anime, movie, OVA and spinoff linked together under one franchise page.', href: '/franchises' },
+            { emoji: '', title: 'Airing Schedule', desc: "See what's airing today, this week, and every day — with broadcast times.", href: '/schedule' },
+            { emoji: '', title: 'Future Releases', desc: 'Track upcoming anime seasons and never miss an announcement again.', href: '/upcoming' },
           ].map(({ emoji, title, desc, href }) => (
             <Link key={title} href={href}
               className="group bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-white/15 hover:-translate-y-1 transition-all duration-200">

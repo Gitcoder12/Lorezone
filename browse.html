@@ -160,12 +160,12 @@
         <span class="filter-label">Media Type</span>
         <div class="filter-chips">
           <button class="filter-chip active" data-filter="type" data-value="all">All</button>
-          <button class="filter-chip" data-filter="type" data-value="anime">🎌</button>
-          <button class="filter-chip" data-filter="type" data-value="manga">📖</button>
-          <button class="filter-chip" data-filter="type" data-value="comic">💥</button>
-          <button class="filter-chip" data-filter="type" data-value="movie">🎬</button>
-          <button class="filter-chip" data-filter="type" data-value="show">📺</button>
-          <button class="filter-chip" data-filter="type" data-value="book">📚</button>
+          <button class="filter-chip" data-filter="type" data-value="anime"></button>
+          <button class="filter-chip" data-filter="type" data-value="manga"></button>
+          <button class="filter-chip" data-filter="type" data-value="comic"></button>
+          <button class="filter-chip" data-filter="type" data-value="movie"></button>
+          <button class="filter-chip" data-filter="type" data-value="show"></button>
+          <button class="filter-chip" data-filter="type" data-value="book"></button>
         </div>
       </div>
 
@@ -259,10 +259,10 @@
       <div class="results-header">
         <div class="results-count">Found <strong id="result-count">0</strong> titles</div>
         <select class="sort-select" id="sort-select">
-          <option value="rating">⭐ Top Rated</option>
-          <option value="year-desc">📅 Newest</option>
-          <option value="year-asc">📅 Oldest</option>
-          <option value="title">🔤 A–Z</option>
+          <option value="rating"> Top Rated</option>
+          <option value="year-desc"> Newest</option>
+          <option value="year-asc"> Oldest</option>
+          <option value="title"> A–Z</option>
         </select>
       </div>
 
@@ -310,7 +310,7 @@
     const t = document.getElementById('page-title');
     const s = document.getElementById('page-subtitle');
     if (state.watchlistOnly) {
-      t.textContent = '♥ My Watchlist'; s.textContent = `${Watchlist.count()} saved titles`;
+      t.textContent = ' My Watchlist'; s.textContent = `${Watchlist.count()} saved titles`;
     } else {
       t.textContent = `Browse ${labels[state.type] || 'All Media'}`;
       s.textContent = state.genre ? `Genre: ${state.genre}` : 'Discover your next obsession';
@@ -342,12 +342,12 @@
       if (state.watchlistOnly) {
         grid.innerHTML = `<div class="watchlist-empty" style="grid-column:1/-1">
           <div class="big">♡</div>
-          <p>No saved titles yet.<br>Browse and tap ♥ to add titles to your list.</p>
+          <p>No saved titles yet.<br>Browse and tap  to add titles to your list.</p>
           <a href="browse.html" class="btn btn-primary" style="margin-top:1.5rem">Browse Now</a>
         </div>`;
       } else {
         grid.innerHTML = `<div class="no-results">
-          <span class="emoji">🔍</span>
+          <span class="emoji"></span>
           <p>No titles found.<br>Try adjusting your filters.</p>
         </div>`;
       }

@@ -49,7 +49,7 @@ export default function LiveTitlePage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-white/40 mb-4">Could not load this title</p>
-            <Link href="/" className="text-[#e24b4a] hover:underline">Go home</Link>
+            <Link href="/" className="text-[#ff6b3d] hover:underline">Go home</Link>
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function LiveTitlePage() {
 
             {data.trailer?.url && (
               <a href={data.trailer.url} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#e24b4a] hover:bg-[#c93e3d] transition rounded-full px-4 py-2 text-sm font-medium">
+                className="inline-flex items-center gap-2 bg-[#ff6b3d] hover:bg-[#e85a2b] transition rounded-full px-4 py-2 text-sm font-medium">
                 <Play className="w-3.5 h-3.5" /> Watch Trailer
               </a>
             )}
@@ -157,7 +157,7 @@ export default function LiveTitlePage() {
           {(['info', 'relations', 'characters'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-5 py-2.5 text-sm font-medium capitalize border-b-2 transition-colors ${
-                tab === t ? 'border-[#e24b4a] text-white' : 'border-transparent text-white/40 hover:text-white/70'
+                tab === t ? 'border-[#ff6b3d] text-white' : 'border-transparent text-white/40 hover:text-white/70'
               }`}>
               {t}
               {t === 'relations' && ` (${Object.keys(groupedRelations).length})`}

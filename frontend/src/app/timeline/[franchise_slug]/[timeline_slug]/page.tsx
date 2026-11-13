@@ -91,8 +91,8 @@ export default function TimelinePage() {
             {entries.map((entry, i) => (
               <div key={i} className="flex gap-4 relative">
                 {/* Dot */}
-                <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border-2 border-[#e24b4a]/50 flex items-center justify-center shrink-0 z-10">
-                  <span className="text-xs font-bold text-[#e24b4a]">{entry.position}</span>
+                <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border-2 border-[#ff6b3d]/50 flex items-center justify-center shrink-0 z-10">
+                  <span className="text-xs font-bold text-[#ff6b3d]">{entry.position}</span>
                 </div>
 
                 <Link

@@ -1,37 +1,40 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowUpRight, Star } from 'lucide-react'
 import { Title } from '../app/types'
 import MediaBadge from './MediaBadge'
 
 export default function TitleCard({ title }: { title: Title }) {
-  const img = title.cover_image
-  const emoji = ['anime', 'movie', 'ova', 'ona', 'special', 'series'].includes(title.media_type) ? '🎬' : '📖'
+  const isVisual = ['anime', 'movie', 'ova', 'ona', 'special', 'series'].includes(title.media_type)
+  const releaseYear = title.release_date ? new Date(title.release_date).getFullYear() : null
 
   return (
-    <Link
-      href={`/title/${title.slug}`}
-      className="group bg-[#1a1a1a] border border-white/5 rounded-xl overflow-hidden hover:-translate-y-1 hover:border-white/15 transition-all duration-200 block"
-    >
-      <div className="relative aspect-[2/3] bg-[#222]">
-        {img ? (
+    <Link href={`/title/${title.slug}`} className="title-library-card group">
+      <div className="title-library-card__art">
+        {title.cover_image ? (
           <Image
-            src={img}
+            src={title.cover_image}
             alt={title.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            sizes="(max-width: 640px) 44vw, (max-width: 1024px) 28vw, 190px"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-4xl">{emoji}</div>
+          <div className="title-library-card__placeholder">{isVisual ? 'FILM / SERIES' : 'PRINT / STORY'}</div>
         )}
+        <div className="title-library-card__shade" />
+        {title.avg_rating ? (
+          <span className="title-library-card__rating">
+            <Star size={11} fill="currentColor" /> {Number(title.avg_rating).toFixed(1)}
+          </span>
+        ) : null}
+        <span className="title-library-card__open">View details <ArrowUpRight size={13} /></span>
       </div>
-      <div className="p-2.5">
-        <p className="text-xs font-medium line-clamp-2 mb-1.5 leading-snug">{title.title}</p>
-        <div className="flex items-center justify-between gap-1 flex-wrap">
+      <div className="title-library-card__meta">
+        <h3 title={title.title}>{title.title}</h3>
+        <div>
           <MediaBadge type={title.media_type} small />
-          {title.avg_rating && (
-            <span className="text-[10px] text-white/40">★ {title.avg_rating}</span>
-          )}
+          {releaseYear ? <span>{releaseYear}</span> : null}
         </div>
       </div>
     </Link>

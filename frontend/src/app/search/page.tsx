@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { FormEvent, Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Search } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ArrowUpRight, Search, Sparkles } from 'lucide-react'
 import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
 import MediaBadge from '../../components/MediaBadge'
 import { SearchResult } from '../types'
 
@@ -13,122 +14,154 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 function SearchContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const q = searchParams.get('q') || ''
-  const [query, setQuery] = useState(q)
+  const queryParam = searchParams.get('q') || ''
+  const [query, setQuery] = useState(queryParam)
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    setQuery(q)
-    if (q.length < 2) { setResults([]); return }
-    setLoading(true)
-    fetch(`${API}/api/search?q=${encodeURIComponent(q)}`)
-      .then(r => r.json())
-      .then(d => { setResults(d.results || []); setLoading(false) })
-      .catch(() => setLoading(false))
-  }, [q])
+    setQuery(queryParam)
+    if (queryParam.trim().length < 2) {
+      setResults([])
+      setLoading(false)
+      setError(false)
+      return
+    }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`)
+    const controller = new AbortController()
+    setLoading(true)
+    setError(false)
+    fetch(`${API}/api/search?q=${encodeURIComponent(queryParam)}`, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) throw new Error('Search is unavailable')
+        return response.json()
+      })
+      .then(data => {
+        if (!controller.signal.aborted) setResults(data.results || [])
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setError(true)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
+  }, [queryParam])
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault()
+    const trimmed = query.trim()
+    if (trimmed.length >= 2) router.push(`/search?q=${encodeURIComponent(trimmed)}`)
   }
 
-  const titles = results.filter(r => r.result_type === 'title')
-  const franchises = results.filter(r => r.result_type === 'franchise')
+  const franchises = results.filter(result => result.result_type === 'franchise')
+  const titles = results.filter(result => result.result_type === 'title')
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <h1 className="font-syne text-3xl font-bold mb-6">Search</h1>
-
-        <form onSubmit={handleSearch} className="mb-8">
-          <div className="relative max-w-xl">
+      <main className="page-shell">
+        <section className="page-intro search-intro">
+          <p className="eyebrow">FIND YOUR NEXT OBSESSION</p>
+          <h1>Search the storyverse.</h1>
+          <p>Look up a title or jump straight into a connected universe.</p>
+          <form className="search-page-form" onSubmit={submit} role="search">
+            <Search size={19} />
             <input
-              type="text"
               value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Search franchises, anime, manga..."
-              className="w-full bg-white/5 border border-white/10 rounded-full px-5 py-3 pl-12 focus:outline-none focus:border-[#e24b4a]/50 placeholder-white/25"
+              onChange={event => setQuery(event.target.value)}
+              placeholder="Try Naruto, Bleach, One Piece..."
+              aria-label="Search titles and franchises"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <button type="submit">Search <ArrowUpRight size={15} /></button>
+          </form>
+        </section>
+
+        {queryParam.length < 2 ? (
+          <section className="search-empty">
+            <Sparkles size={25} />
+            <h2>Every story starts somewhere.</h2>
+            <p>Search the LoreZone database for franchises and connected titles.</p>
+            <div className="search-shortcuts">
+              <Link href="/franchises">Browse universes</Link>
+              <Link href="/browse/anime">Explore anime</Link>
+              <Link href="/browse/manga">Explore manga</Link>
+            </div>
+          </section>
+        ) : null}
+
+        {loading ? (
+          <div className="search-loading">
+            {Array.from({ length: 5 }).map((_, index) => <div key={index} />)}
           </div>
-        </form>
+        ) : null}
 
-        {loading && (
-          <div className="space-y-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-16 bg-white/5 rounded-xl animate-pulse" />
-            ))}
+        {error && !loading ? (
+          <div className="directory-empty">
+            <h2>Search is temporarily unavailable.</h2>
+            <p>Check that the LoreZone API and database are running, then try again.</p>
           </div>
-        )}
+        ) : null}
 
-        {!loading && q && results.length === 0 && (
-          <p className="text-white/30 text-sm">No results for "{q}"</p>
-        )}
+        {!loading && !error && queryParam.length >= 2 && results.length === 0 ? (
+          <div className="directory-empty">
+            <h2>No matches for “{queryParam}”.</h2>
+            <p>Try a shorter name, an alternate spelling or a franchise title.</p>
+          </div>
+        ) : null}
 
-        {franchises.length > 0 && (
-          <div className="mb-8">
-            <h2 className="font-syne text-lg font-bold mb-3 text-white/70">Franchises</h2>
-            <div className="space-y-2">
-              {franchises.map(f => (
-                <Link
-                  key={f.id}
-                  href={`/franchise/${f.slug}`}
-                  className="flex items-center gap-4 bg-[#1a1a1a] border border-white/5 rounded-xl px-4 py-3 hover:border-white/15 transition group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-[#e24b4a]/20 flex items-center justify-center font-syne font-bold text-[#e24b4a] shrink-0">
-                    {f.title.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-medium group-hover:text-[#e24b4a] transition">{f.title}</p>
-                    <p className="text-xs text-white/30">Franchise</p>
-                  </div>
+        {!loading && franchises.length > 0 ? (
+          <section className="search-result-section">
+            <div className="section-heading">
+              <div><p className="eyebrow">CONNECTED WORLDS</p><h2>Universes</h2></div>
+              <span className="catalogue-total">{franchises.length} found</span>
+            </div>
+            <div className="search-franchise-grid">
+              {franchises.map(franchise => (
+                <Link href={`/franchise/${franchise.slug}`} key={franchise.id} className="search-franchise-card">
+                  <span className="search-franchise-card__symbol">{franchise.title.slice(0, 1)}</span>
+                  <span><strong>{franchise.title}</strong><small>Connected universe</small></span>
+                  <ArrowUpRight size={16} />
                 </Link>
               ))}
             </div>
-          </div>
-        )}
+          </section>
+        ) : null}
 
-        {titles.length > 0 && (
-          <div>
-            <h2 className="font-syne text-lg font-bold mb-3 text-white/70">
-              Titles <span className="text-white/25 text-sm font-normal">({titles.length})</span>
-            </h2>
-            <div className="space-y-2">
-              {titles.map(t => (
-                <Link
-                  key={t.id}
-                  href={`/title/${t.slug}`}
-                  className="flex items-center gap-4 bg-[#1a1a1a] border border-white/5 rounded-xl px-4 py-3 hover:border-white/15 transition group"
-                >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div>
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <p className="font-medium text-sm group-hover:text-[#e24b4a] transition truncate">{t.title}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {t.media_type && <MediaBadge type={t.media_type} small />}
-                        {t.franchise_name && <span className="text-xs text-white/30">{t.franchise_name}</span>}
-                      </div>
-                    </div>
-                  </div>
-                  {t.avg_rating && (
-                    <span className="text-xs text-white/30 shrink-0">★ {t.avg_rating}</span>
-                  )}
+        {!loading && titles.length > 0 ? (
+          <section className="search-result-section">
+            <div className="section-heading">
+              <div><p className="eyebrow">THE CATALOGUE</p><h2>Titles</h2></div>
+              <span className="catalogue-total">{titles.length} found</span>
+            </div>
+            <div className="search-title-list">
+              {titles.map(title => (
+                <Link href={`/title/${title.slug}`} key={title.id} className="search-title-card">
+                  <span className="search-title-card__symbol">{title.title.slice(0, 1)}</span>
+                  <span className="search-title-card__copy">
+                    <strong>{title.title}</strong>
+                    <span>
+                      {title.media_type ? <MediaBadge type={title.media_type} small /> : null}
+                      {title.franchise_name ? <small>{title.franchise_name}</small> : null}
+                    </span>
+                  </span>
+                  {title.avg_rating ? <span className="search-title-card__rating">★ {Number(title.avg_rating).toFixed(1)}</span> : null}
+                  <ArrowUpRight size={16} />
                 </Link>
               ))}
             </div>
-          </div>
-        )}
-      </div>
+          </section>
+        ) : null}
+      </main>
+      <Footer />
     </div>
   )
 }
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen"><div className="max-w-5xl mx-auto px-4 py-10"><div className="h-8 bg-white/5 rounded w-48 animate-pulse" /></div></div>}>
+    <Suspense fallback={<div className="min-h-screen"><Navbar /><main className="page-shell"><div className="search-loading"><div /></div></main><Footer /></div>}>
       <SearchContent />
     </Suspense>
   )

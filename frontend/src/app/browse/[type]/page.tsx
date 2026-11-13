@@ -99,7 +99,7 @@ export default function BrowsePage() {
               <button key={f.value} onClick={() => setFilter(f.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   filter === f.value
-                    ? 'bg-[#e24b4a] text-white'
+                    ? 'bg-[#ff6b3d] text-white'
                     : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white border border-white/10'
                 }`}>
                 {f.label}
@@ -137,7 +137,7 @@ export default function BrowsePage() {
                         </div>
                       )}
                       {item.rank && (
-                        <div className="absolute top-2 left-2 bg-[#e24b4a]/80 text-[10px] px-1.5 py-0.5 rounded font-bold">
+                        <div className="absolute top-2 left-2 bg-[#ff6b3d]/80 text-[10px] px-1.5 py-0.5 rounded font-bold">
                           #{item.rank}
                         </div>
                       )}
@@ -168,7 +168,7 @@ export default function BrowsePage() {
                       }
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate group-hover:text-[#e24b4a] transition">{item.title_english || item.title}</p>
+                      <p className="text-sm font-medium truncate group-hover:text-[#ff6b3d] transition">{item.title_english || item.title}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <MediaBadge type={isAnime ? (item.type?.toLowerCase() === 'tv' ? 'anime' : (item.type?.toLowerCase() || 'anime')) : 'manga'} small />
                         {item.genres?.slice(0, 2).map((g: any) => (
@@ -198,7 +198,7 @@ export default function BrowsePage() {
         )}
         {loading && items.length > 0 && (
           <div className="flex justify-center mt-8">
-            <div className="w-6 h-6 border-2 border-white/10 border-t-[#e24b4a] rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-white/10 border-t-[#ff6b3d] rounded-full animate-spin" />
           </div>
         )}
       </div>

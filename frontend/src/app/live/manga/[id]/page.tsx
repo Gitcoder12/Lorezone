@@ -17,7 +17,7 @@ export default function MangaDetailPage() {
     fetch(`${API}/api/live/manga/${id}`).then(r=>r.json()).then(d=>{setData(d);setLoading(false)}).catch(()=>setLoading(false))
   }, [id])
   if (loading) return <div className="min-h-screen"><Navbar /><div className="h-72 bg-white/5 animate-pulse" /><div className="max-w-6xl mx-auto px-4 py-8 space-y-4 animate-pulse"><div className="h-8 bg-white/5 rounded w-64"/><div className="h-32 bg-white/5 rounded"/></div></div>
-  if (!data||data.error) return <div className="min-h-screen flex flex-col"><Navbar /><div className="flex-1 flex items-center justify-center"><div className="text-center"><p className="text-white/40 mb-4">Not found</p><button onClick={()=>router.back()} className="text-[#e24b4a] hover:underline">Go back</button></div></div></div>
+  if (!data||data.error) return <div className="min-h-screen flex flex-col"><Navbar /><div className="flex-1 flex items-center justify-center"><div className="text-center"><p className="text-white/40 mb-4">Not found</p><button onClick={()=>router.back()} className="text-[#ff6b3d] hover:underline">Go back</button></div></div></div>
   const banner=data.bannerImage||data.anilist?.bannerImage
   const cover=data.coverImageXL||data.images?.jpg?.large_image_url
   const title=data.title_english||data.title
@@ -61,7 +61,7 @@ export default function MangaDetailPage() {
         </div>
         <div className="flex gap-1 border-b border-white/5 mb-6">
           {(['overview','characters','relations'] as const).map(t=>(
-            <button key={t} onClick={()=>setTab(t)} className={`px-4 py-2.5 text-sm font-medium capitalize border-b-2 transition-colors ${tab===t?'border-[#e24b4a] text-white':'border-transparent text-white/40 hover:text-white/70'}`}>{t}</button>
+            <button key={t} onClick={()=>setTab(t)} className={`px-4 py-2.5 text-sm font-medium capitalize border-b-2 transition-colors ${tab===t?'border-[#ff6b3d] text-white':'border-transparent text-white/40 hover:text-white/70'}`}>{t}</button>
           ))}
         </div>
         {tab==='overview'&&(

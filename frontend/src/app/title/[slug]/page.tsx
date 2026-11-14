@@ -154,7 +154,7 @@ export default function TitlePage() {
               <Image src={title.cover_image} alt={title.title} fill className="object-cover" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-4xl">
-                {['anime', 'movie', 'ova'].includes(title.media_type) ? '🎬' : '📖'}
+                {['anime', 'movie', 'ova'].includes(title.media_type) ? '' : ''}
               </div>
             )}
           </div>

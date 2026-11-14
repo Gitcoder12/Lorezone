@@ -37,7 +37,7 @@ export default function MangaDetailPage() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex gap-6 -mt-20 relative z-10 mb-8">
           <div className="relative w-32 md:w-44 shrink-0 aspect-[2/3] rounded-xl overflow-hidden border-2 border-[#0f0f0f] shadow-2xl bg-[#1a1a1a]">
-            {cover?<Image src={cover} alt={title} fill className="object-cover"/>:<div className="absolute inset-0 flex items-center justify-center text-4xl">📖</div>}
+            {cover?<Image src={cover} alt={title} fill className="object-cover"/>:<div className="absolute inset-0 flex items-center justify-center text-4xl"></div>}
           </div>
           <div className="flex-1 min-w-0 pt-24">
             <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -85,7 +85,7 @@ export default function MangaDetailPage() {
               {characters.map((c:any,i:number)=>(
                 <div key={i} className="bg-[#1a1a1a] border border-white/5 rounded-xl overflow-hidden">
                   <div className="relative aspect-[3/4] bg-[#222]">
-                    {c.character?.images?.jpg?.image_url?<Image src={c.character.images.jpg.image_url} alt="" fill className="object-cover object-top" sizes="200px"/>:<div className="absolute inset-0 flex items-center justify-center text-3xl">👤</div>}
+                    {c.character?.images?.jpg?.image_url?<Image src={c.character.images.jpg.image_url} alt="" fill className="object-cover object-top" sizes="200px"/>:<div className="absolute inset-0 flex items-center justify-center text-3xl"></div>}
                   </div>
                   <div className="p-2"><p className="text-xs font-medium line-clamp-1">{c.character?.name}</p><p className="text-[10px] text-white/30">{c.role}</p></div>
                 </div>

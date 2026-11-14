@@ -5,7 +5,7 @@ import MediaBadge from './MediaBadge'
 
 export default function TitleCard({ title }: { title: Title }) {
   const img = title.cover_image
-  const emoji = ['anime', 'movie', 'ova', 'ona', 'special', 'series'].includes(title.media_type) ? '🎬' : '📖'
+  const emoji = ['anime', 'movie', 'ova', 'ona', 'special', 'series'].includes(title.media_type) ? '' : ''
 
   return (
     <Link

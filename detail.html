@@ -242,7 +242,7 @@
   if (!item) {
     document.getElementById('detail-root').innerHTML = `
       <div style="text-align:center;padding:5rem 2rem;color:var(--text3)">
-        <div style="font-size:3.5rem;margin-bottom:1rem">🔍</div>
+        <div style="font-size:3.5rem;margin-bottom:1rem"></div>
         <p style="font-size:1.1rem;margin-bottom:1.5rem">Title not found</p>
         <a href="index.html" class="btn btn-primary">← Back to Home</a>
       </div>`;
@@ -318,9 +318,9 @@
             ${warningsHTML}
             <div class="detail-actions">
               <button id="wl-btn" class="btn ${inWatchlist?'btn-primary':'btn-ghost'}" onclick="doWatchlist()">
-                ${inWatchlist ? '♥ In My List' : '♡ Add to List'}
+                ${inWatchlist ? ' In My List' : '♡ Add to List'}
               </button>
-              ${item.trailer ? `<a href="${item.trailer}" target="_blank" class="btn btn-ghost">▶ Trailer</a>` : ''}
+              ${item.trailer ? `<a href="${item.trailer}" target="_blank" class="btn btn-ghost"> Trailer</a>` : ''}
               <a href="browse.html" class="btn btn-ghost">← Browse</a>
             </div>
           </div>
@@ -377,7 +377,7 @@
             <div class="trailer-wrap">
               ${trailerId
                 ? `<iframe src="https://www.youtube.com/embed/${trailerId}" allowfullscreen allow="autoplay"></iframe>`
-                : `<div class="trailer-placeholder"><span class="big">🎬</span><span>No trailer available</span></div>`
+                : `<div class="trailer-placeholder"><span class="big"></span><span>No trailer available</span></div>`
               }
             </div>
           </div>
@@ -419,9 +419,9 @@
   function doWatchlist() {
     const added = Watchlist.toggle(item.id);
     const btn = document.getElementById('wl-btn');
-    btn.textContent = added ? '♥ In My List' : '♡ Add to List';
+    btn.textContent = added ? ' In My List' : '♡ Add to List';
     btn.className = `btn ${added ? 'btn-primary' : 'btn-ghost'}`;
-    showToast(added ? '❤️ Added to your list' : '💔 Removed from list');
+    showToast(added ? ' Added to your list' : ' Removed from list');
   }
 
   function saveProgress(id, total) {
@@ -430,7 +430,7 @@
     document.getElementById('prog-label').textContent = `${val} / ${total}`;
     const pct = Math.round((val / total) * 100);
     document.getElementById('prog-fill').style.width = pct + '%';
-    showToast(`✅ Progress: ${pct}%`);
+    showToast(` Progress: ${pct}%`);
   }
 </script>
 </body>

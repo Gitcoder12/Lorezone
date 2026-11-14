@@ -5,25 +5,25 @@
 
 // ── Content Warnings System ────────────────────────────────
 const ContentWarnings = {
-  violence: { icon: '⚠️', label: 'Violence', color: '#ff4444' },
-  gore: { icon: '🩸', label: 'Gore', color: '#8b0000' },
-  psychological: { icon: '🧠', label: 'Psychological', color: '#9b5de5' },
-  sexual: { icon: '🔞', label: 'Sexual Content', color: '#dc2f02' },
-  suicide: { icon: '⛔', label: 'Suicide/Self-harm', color: '#ff0000' },
-  dark: { icon: '🌑', label: 'Very Dark', color: '#1a1a2e' }
+  violence: { icon: '', label: 'Violence', color: '#ff4444' },
+  gore: { icon: '', label: 'Gore', color: '#8b0000' },
+  psychological: { icon: '', label: 'Psychological', color: '#9b5de5' },
+  sexual: { icon: '', label: 'Sexual Content', color: '#dc2f02' },
+  suicide: { icon: '', label: 'Suicide/Self-harm', color: '#ff0000' },
+  dark: { icon: '', label: 'Very Dark', color: '#1a1a2e' }
 };
 
 // ── Demographics ───────────────────────────────────────────
 const Demographics = {
-  'Kids': '👶',
-  'Shounen': '👦',
-  'Shoujo': '👧',
-  'Seinen': '👨',
-  'Josei': '👩',
-  'Family': '👨‍👩‍👧‍👦',
-  'PG-13': '🎬',
-  'Mature': '🔞',
-  'Adult': '🚫'
+  'Kids': '',
+  'Shounen': '',
+  'Shoujo': '',
+  'Seinen': '',
+  'Josei': '',
+  'Family': '',
+  'PG-13': '',
+  'Mature': '',
+  'Adult': ''
 };
 
 // ── Media Database ──────────────────────────────────────────
@@ -466,7 +466,7 @@ function buildCard(item, extraClass = '') {
       <button class="card-watchlist-btn ${inWatchlist ? 'saved' : ''}"
               onclick="event.stopPropagation(); toggleWatchlist(${item.id}, this)"
               title="${inWatchlist ? 'Remove from list' : 'Add to list'}">
-        ${inWatchlist ? '♥' : '♡'}
+        ${inWatchlist ? '' : '♡'}
       </button>
       <div class="card-body">
         <div class="card-title">${item.title}</div>
@@ -483,9 +483,9 @@ function buildCard(item, extraClass = '') {
 
 function toggleWatchlist(id, btn) {
   const added = Watchlist.toggle(id);
-  btn.textContent = added ? '♥' : '♡';
+  btn.textContent = added ? '' : '♡';
   btn.classList.toggle('saved', added);
-  showToast(added ? '❤️ Added to your list' : '💔 Removed from list');
+  showToast(added ? ' Added to your list' : ' Removed from list');
 }
 
 function goDetail(id) {
@@ -537,8 +537,8 @@ function buildNavbar(activePage = '') {
           </svg>
           <input type="text" id="nav-search" placeholder="Search titles..." autocomplete="off">
         </div>
-        <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme">☀️</button>
-        <a href="browse.html?watchlist=1" class="btn-icon" title="My List (${Watchlist.count()})">♥</a>
+        <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme"></button>
+        <a href="browse.html?watchlist=1" class="btn-icon" title="My List (${Watchlist.count()})"></a>
       </div>
     </nav>
     <div id="search-dropdown" style="
@@ -587,7 +587,7 @@ function initNavSearch() {
 function buildFooter() {
   return `
     <footer class="footer">
-      <p>LORE<span>ZONE</span> · Your Universe of Stories · Built with ❤️</p>
+      <p>LORE<span>ZONE</span> · Your Universe of Stories · Built with </p>
       <p style="margin-top:0.5rem;font-size:0.75rem">Anime · Manga · Comics · Movies · Shows · Books</p>
       <p style="margin-top:0.4rem;font-size:0.7rem;opacity:0.7">Data via MyAnimeList · TMDB · Open Library · Image Comics</p>
     </footer>

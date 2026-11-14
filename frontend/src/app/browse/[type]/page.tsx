@@ -90,7 +90,7 @@ export default function BrowsePage() {
             <span className="text-sm capitalize">{mediaType}</span>
           </div>
           <h1 className="font-syne text-4xl font-bold mb-6 capitalize">
-            {isAnime ? '🎬' : '📖'} Browse {mediaType}
+            {isAnime ? '' : ''} Browse {mediaType}
           </h1>
 
           {/* Filter tabs */}
@@ -129,7 +129,7 @@ export default function BrowsePage() {
                     <div className="relative aspect-[2/3] bg-[#222]">
                       {item.images?.jpg?.image_url
                         ? <Image src={item.images.jpg.image_url} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="200px" />
-                        : <div className="absolute inset-0 flex items-center justify-center text-3xl">{isAnime ? '🎬' : '📖'}</div>
+                        : <div className="absolute inset-0 flex items-center justify-center text-3xl">{isAnime ? '' : ''}</div>
                       }
                       {item.score && (
                         <div className="absolute top-2 right-2 bg-black/70 backdrop-blur text-[10px] px-1.5 py-0.5 rounded text-yellow-400 font-bold">
@@ -164,7 +164,7 @@ export default function BrowsePage() {
                     <div className="relative w-12 aspect-[2/3] rounded-lg overflow-hidden bg-[#222] shrink-0">
                       {item.images?.jpg?.image_url
                         ? <Image src={item.images.jpg.image_url} alt="" fill className="object-cover" sizes="50px" />
-                        : <div className="absolute inset-0 flex items-center justify-center text-lg">{isAnime ? '🎬' : '📖'}</div>
+                        : <div className="absolute inset-0 flex items-center justify-center text-lg">{isAnime ? '' : ''}</div>
                       }
                     </div>
                     <div className="flex-1 min-w-0">

@@ -1,6 +1,6 @@
-# 🎬 LoreZone - Complete Setup & Upgrade Guide
+#  LoreZone - Complete Setup & Upgrade Guide
 
-## 🚀 EASIEST WAY TO RUN (30 Seconds)
+##  EASIEST WAY TO RUN (30 Seconds)
 
 ```bash
 bash start.sh
@@ -10,9 +10,9 @@ bash start.sh
 
 ---
 
-## 📋 WHAT YOU GET RIGHT NOW (v1.0)
+##  WHAT YOU GET RIGHT NOW (v1.0)
 
-### ✅ Ready to Use
+###  Ready to Use
 - 25 titles loaded (anime, manga, movies, comics, shows, books)
 - Real-time search (instant results)
 - Advanced filters (7 types)
@@ -24,7 +24,7 @@ bash start.sh
 - Fully responsive (mobile, tablet, desktop)
 - Works offline (all data local)
 
-### ✅ Technical
+###  Technical
 - Zero dependencies (frontend)
 - Express.js backend
 - PostgreSQL database
@@ -34,7 +34,7 @@ bash start.sh
 
 ---
 
-## 🎯 RECOMMENDED UPGRADES (Based on Your Goals)
+##  RECOMMENDED UPGRADES (Based on Your Goals)
 
 ### IF YOU WANT: Quick Revenue
 **UPGRADE PATH**: Tier 1 (Essential)
@@ -64,7 +64,7 @@ bash start.sh
 
 ---
 
-## 🔥 TOP 5 MOST IMPACTFUL UPGRADES
+##  TOP 5 MOST IMPACTFUL UPGRADES
 
 ### 1. Real Data Integration (HIGHEST PRIORITY)
 ```
@@ -108,7 +108,7 @@ Result: Users track their watching habits
 
 ---
 
-## 💻 HOW TO IMPLEMENT UPGRADES
+##  HOW TO IMPLEMENT UPGRADES
 
 ### Quick Wins (1-2 hours each)
 These give immediate value with minimal effort:
@@ -165,7 +165,7 @@ STEP 5: Monitor
 
 ---
 
-## 🎁 IMMEDIATE IMPROVEMENTS (No Code Changes)
+##  IMMEDIATE IMPROVEMENTS (No Code Changes)
 
 ### 1. Add More Titles (in-memory)
 Edit `app.js`, add to `LOREZONE_DB`:
@@ -200,7 +200,7 @@ Edit HTML files:
 
 ---
 
-## 🚀 RECOMMENDED TECH STACK FOR UPGRADES
+##  RECOMMENDED TECH STACK FOR UPGRADES
 
 ### Frontend (Adding these)
 ```
@@ -238,7 +238,7 @@ Edit HTML files:
 
 ---
 
-## 📈 GROWTH ROADMAP
+##  GROWTH ROADMAP
 
 ### Month 1: Foundation
 ```
@@ -278,7 +278,7 @@ Result: Revenue generation
 
 ---
 
-## 💰 COST BREAKDOWN
+##  COST BREAKDOWN
 
 ### Self-Hosted (DIY)
 ```
@@ -309,7 +309,7 @@ With mobile: $25-40K
 
 ---
 
-## 🎯 SUCCESS METRICS
+##  SUCCESS METRICS
 
 Track these to measure success:
 
@@ -342,15 +342,15 @@ Technical Metrics:
 
 ---
 
-## ✨ FINAL RECOMMENDATIONS
+##  FINAL RECOMMENDATIONS
 
 ### DO THIS FIRST
 ```
-1. ✅ Run the current app (bash start.sh)
-2. ✅ Test all features
-3. ✅ Get user feedback
-4. ✅ Decide on upgrade path
-5. ✅ Implement Tier 1 features
+1.  Run the current app (bash start.sh)
+2.  Test all features
+3.  Get user feedback
+4.  Decide on upgrade path
+5.  Implement Tier 1 features
 ```
 
 ### QUICK WINS TO ADD NOW
@@ -375,7 +375,7 @@ ROI: High
 
 ---
 
-## 🎬 CLAUDE CAN HELP WITH
+##  CLAUDE CAN HELP WITH
 
 Just ask Claude for:
 
@@ -411,21 +411,21 @@ Just ask Claude for:
 
 ---
 
-## 📊 FINAL STATUS
+##  FINAL STATUS
 
 ```
 Current Version: 1.0
-Status: ✅ PRODUCTION READY
-Ease of Setup: ⭐⭐⭐⭐⭐ (One command)
-Features: ⭐⭐⭐⭐ (25 titles, all core features)
-Performance: ⭐⭐⭐⭐⭐ (<2s load time)
-Scalability: ⭐⭐⭐ (Ready for upgrades)
-Documentation: ⭐⭐⭐⭐⭐ (4 guides)
+Status:  PRODUCTION READY
+Ease of Setup:  (One command)
+Features:  (25 titles, all core features)
+Performance:  (<2s load time)
+Scalability:  (Ready for upgrades)
+Documentation:  (4 guides)
 ```
 
 ---
 
-## 🎉 LAUNCH TODAY
+##  LAUNCH TODAY
 
 ```bash
 bash start.sh
@@ -437,7 +437,7 @@ All files are on GitHub: https://github.com/Gitcoder12/Lorezone
 
 ---
 
-## 📚 DOCUMENTATION
+##  DOCUMENTATION
 
 - **README.md** - Overview & features
 - **QUICK_START_GUIDE.md** - Step-by-step setup
@@ -447,7 +447,7 @@ All files are on GitHub: https://github.com/Gitcoder12/Lorezone
 
 ---
 
-## ✅ CHECKLIST BEFORE GOING LIVE
+##  CHECKLIST BEFORE GOING LIVE
 
 - [x] App runs with `bash start.sh`
 - [x] All 25 titles load
@@ -462,10 +462,10 @@ All files are on GitHub: https://github.com/Gitcoder12/Lorezone
 - [x] README.md updated
 - [x] No console errors
 
-**Status**: ✅ READY TO DEPLOY
+**Status**:  READY TO DEPLOY
 
 ---
 
-**Made with ❤️ by [@Gitcoder12](https://github.com/Gitcoder12)**
+**Made with  by [@Gitcoder12](https://github.com/Gitcoder12)**
 
 **Questions? Ask Claude for help implementing any feature!**

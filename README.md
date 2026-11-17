@@ -134,3 +134,22 @@ The Docker Compose credentials are intended for a local development environment 
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+## Engineering Audit & Handover — 2026-11-17
+
+**Review scope:** default branch `main`; static inspection of `backend/src/index.ts`, `backend/package.json`, and `backend/schema.sql`. Runtime tests were not executed.
+
+### Confirmed findings
+- The backend enables unrestricted CORS via `app.use(cors())`; production deployment should restrict allowed origins.
+- `jikanGet()` uses `fetch()` without an explicit timeout or abort signal, so a slow upstream request can hold a request open.
+- `anilistGet()` catches all errors and returns `null`, and does not check `res.ok` before parsing. This can hide upstream failures from callers and make missing enrichment difficult to diagnose.
+- The database schema uses cascading foreign-key deletes for franchise/title relationships. These constraints are intentional but should be understood and protected by backup/migration discipline.
+
+### Next actions
+1. Restrict CORS and add request-size limits, endpoint validation, and rate limiting.
+2. Add bounded timeouts, explicit HTTP status checks, structured upstream error logging, and clear partial-response semantics.
+3. Add integration tests for database setup, auth, provider failures, and franchise/timeline routes; verify JWT secret handling in production.
+
+**Verification status:** static backend/schema inspection only; build, database migrations, API behavior, authentication security, and tests remain unverified.

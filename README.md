@@ -153,3 +153,10 @@ MIT. See [LICENSE](LICENSE).
 3. Add integration tests for database setup, auth, provider failures, and franchise/timeline routes; verify JWT secret handling in production.
 
 **Verification status:** static backend/schema inspection only; build, database migrations, API behavior, authentication security, and tests remain unverified.
+
+---
+
+## Examples Used
+- Exploring an anime franchise and its connected titles
+- Following a manga-to-anime adaptation timeline
+- Comparing seasonal and upcoming catalogue entries

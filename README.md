@@ -153,3 +153,28 @@ MIT. See [LICENSE](LICENSE).
 3. Add integration tests for database setup, auth, provider failures, and franchise/timeline routes; verify JWT secret handling in production.
 
 **Verification status:** static backend/schema inspection only; build, database migrations, API behavior, authentication security, and tests remain unverified.
+
+
+---
+
+## Branch Activity & Development History
+
+**Audit date:** 2026-11-18 · **Comparison base:** `main`
+
+| Branch | Difference from `main` | Observed work / changed paths |
+|---|---:|---|
+| `chore/remove-emoji-glyphs-2026-11-13` | 16 ahead / 2 behind | Glyph cleanup across deployment reports, upgrade guide, app scripts and frontend pages/components |
+| `docs/portfolio-operating-kit-2026-11-13` | 5 / 2 | Activity log, agent/workflow notes, worklog, company-fit notes, feature plan and skills |
+| `docs/project-status-2026-11-16-lorezone` | 1 / 1 | Project status snapshot: `PROJECT_STATUS.md` |
+| `docs/status-inventory-2026-11-16-v1` | 1 / 1 | Project status inventory: `PROJECT_STATUS.md` |
+| `work/lorezone-premium-ui` | 4 / 2 | Premium UI redesign across Next.js pages, navigation, media rails, title cards, styles and frontend workflow |
+
+### Open pull requests observed during this audit
+
+- [PR #6 — project status snapshot](https://github.com/Gitcoder12/Lorezone/pull/6)
+- [PR #5 — project status snapshot](https://github.com/Gitcoder12/Lorezone/pull/5)
+- [PR #4 — project handbook and security roadmap](https://github.com/Gitcoder12/Lorezone/pull/4)
+- [PR #2 — remove emoji glyphs](https://github.com/Gitcoder12/Lorezone/pull/2)
+- [PR #1 — premium story discovery refactor](https://github.com/Gitcoder12/Lorezone/pull/1)
+
+**Review note:** The premium UI branch touches many frontend routes and components. Compare screenshots, run frontend checks and review data/API behavior before merging. No branches have been merged or deleted by this documentation update.

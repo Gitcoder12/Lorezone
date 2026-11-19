@@ -160,3 +160,27 @@ MIT. See [LICENSE](LICENSE).
 - Exploring an anime franchise and its connected titles
 - Following a manga-to-anime adaptation timeline
 - Comparing seasonal and upcoming catalogue entries
+
+
+---
+
+## Comparison with Existing Open-Source Projects
+
+LoreZone is documented as a combined anime/manga catalogue with live provider data plus its own franchise, title and timeline records. The following projects and APIs are relevant references for catalogue coverage and user workflows.
+
+| Project | Established focus | Relationship to LoreZone |
+|---|---|---|
+| [MAL-Sync](https://github.com/MALSync/MALSync) | Synchronizes anime/manga progress across sites and services | Stronger focus on watch/read progress synchronization; LoreZone focuses on catalogue browsing and a database-backed franchise/timeline layer. |
+| [Jikan](https://github.com/jikan-me/jikan) | Unofficial MyAnimeList API wrapper and data access layer | An upstream-style catalogue data interface used in the broader ecosystem; LoreZone consumes provider data rather than replacing a catalogue API. |
+| [AniList API documentation](https://github.com/AniList/ApiV2-GraphQL-Docs) | GraphQL API schema and documentation for anime/manga metadata | Provides a second metadata source; LoreZone's documented distinction is combining provider catalogue access with its own franchise and timeline records. |
+
+### Where LoreZone is different
+- **Provider aggregation:** the README describes Jikan-backed live search with selected AniList enrichment.
+- **Local franchise knowledge layer:** franchise, title, connection and timeline records are stored in PostgreSQL rather than relying only on upstream catalogue pages.
+- **Full-stack application:** the project combines a Next.js frontend, Express/TypeScript API and PostgreSQL schema.
+
+### Where established projects are stronger
+MAL-Sync has a specialized cross-site progress ecosystem, while upstream catalogue providers have larger datasets and established APIs. LoreZone should not claim more complete or more accurate metadata without source-level validation and coverage measurement.
+
+### Evidence and limitations
+Show provenance for each provider-derived field, handle provider outages/rate limits, and distinguish live API results from locally curated franchise records. Document the synchronization policy and avoid implying that every listed feature is fully populated or production-hardened without tests. This is a scope comparison, not a catalogue-coverage benchmark.

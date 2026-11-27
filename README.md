@@ -160,3 +160,9 @@ MIT. See [LICENSE](LICENSE).
 - Exploring an anime franchise and its connected titles
 - Following a manga-to-anime adaptation timeline
 - Comparing seasonal and upcoming catalogue entries
+
+---
+
+## Repository navigation
+
+[Alphabetical file index](FILE_INDEX.md)
